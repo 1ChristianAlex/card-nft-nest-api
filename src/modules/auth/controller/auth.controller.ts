@@ -1,20 +1,38 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Controller, Post, Request } from '@nestjs/common';
 import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 import AuthService from '../services/auth.service';
-import { LoginInputDto } from './auth.dto';
+import { LoginOutputDto } from './auth.dto';
+import { Request as IRequest } from 'express';
+import { User } from 'src/modules/user/services/user.model';
+import { JwtService } from '@nestjs/jwt';
+import { jwtConstants } from 'src/app/config';
 
 @Controller('auth')
 class AuthController {
-  constructor(private _authService: AuthService) {}
+  constructor(
+    private _authService: AuthService,
+    private jwtService: JwtService,
+  ) {}
 
   @Post('login')
-  async login(@Body() loginBody: LoginInputDto) {
-    const user = await this._authService.doUserLogin(
-      loginBody.email,
-      loginBody.password,
+  async login(@Request() req: IRequest & { user: User }) {
+    const loginData = await this._authService.doUserLogin(
+      req.body.email,
+      req.body.password,
     );
 
-    return UserOutputDto.adapterUserToDto(user);
+    const userDto = UserOutputDto.adapterUserToDto(loginData);
+
+    return new LoginOutputDto(
+      userDto,
+      this.jwtService.sign(
+        { ...userDto },
+        {
+          secret: jwtConstants.secret,
+          expiresIn: '1 day',
+        },
+      ),
+    );
   }
 }
 

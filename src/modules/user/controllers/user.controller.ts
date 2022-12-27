@@ -7,16 +7,24 @@ import {
   ParseIntPipe,
   Body,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/modules/auth/services/jwt-auth.guard';
+import UserDecorator from '../services/user.decorator';
 import UserService from '../services/user.service';
 import { UserInputDto, UserOutputDto } from './user.dto';
 
 @Controller('users')
+@UseGuards(JwtAuthGuard)
 class UserController {
   constructor(private _userService: UserService) {}
 
   @Get('/')
-  async findAll(): Promise<UserOutputDto[]> {
+  async findAll(
+    @UserDecorator() currentUser: UserInputDto,
+  ): Promise<UserOutputDto[]> {
+    console.log(currentUser);
+
     const userList = await this._userService.getAllUser();
 
     return userList.map(UserOutputDto.adapterUserToDto);
