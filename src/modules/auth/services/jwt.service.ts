@@ -1,6 +1,6 @@
+import { getConfigToken } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from 'src/app/config';
 import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 
 @Injectable()
@@ -11,7 +11,7 @@ class JwtAppService {
     return this.jwtService.sign({ ...userDto }, JwtAppService.jwtOptions);
   }
 
-  static readonly SECRET = jwtConstants.secret;
+  static readonly SECRET = getConfigToken('JWT_SECRET');
 
   static readonly jwtOptions = {
     secret: JwtAppService.SECRET,
