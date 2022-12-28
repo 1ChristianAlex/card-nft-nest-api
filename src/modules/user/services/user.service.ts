@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import PasswordHash from 'src/lib/passwordHash/passwordHash.service';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import RolesEntity from '../entities/roles.entity';
 import UserEntity from '../entities/user.entity';
-import { User } from './user.model';
+import { ROLES_ID, User } from './user.model';
 
 @Injectable()
 class UserService {
@@ -45,7 +45,9 @@ class UserService {
   }
 
   public async createNewUser(user: User) {
-    const role = await this.roleRepository.findOneBy({ id: user.role.id ?? 3 });
+    const role = await this.roleRepository.findOneBy({
+      id: user.role.id ?? ROLES_ID.PLAYER,
+    });
 
     const newUser = new UserEntity({
       password: await this._passwordHash.genHash(user.password),

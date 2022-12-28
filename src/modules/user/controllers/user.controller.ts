@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/modules/auth/services/jwt-auth.guard';
 import UserDecorator from '../services/user.decorator';
+import { ROLES_ID } from '../services/user.model';
 import UserService from '../services/user.service';
 import { UserInputDto, UserOutputDto } from './user.dto';
 
@@ -49,8 +50,10 @@ class UserController {
     @UserDecorator() userToken: UserOutputDto,
   ): Promise<UserOutputDto> {
     if (
-      (userToken.role.id !== 1 && userInput.role === 1) ||
-      (![1, 2].includes(userToken.role.id) && userInput.role === 2)
+      (userToken.role.id !== ROLES_ID.ADMIN &&
+        userInput.role === ROLES_ID.ADMIN) ||
+      (![ROLES_ID.ADMIN, ROLES_ID.MANAGER].includes(userToken.role.id) &&
+        userInput.role === ROLES_ID.MANAGER)
     ) {
       throw new Error('User has no correct privileges');
     }

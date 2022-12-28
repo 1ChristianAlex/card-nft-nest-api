@@ -15,7 +15,7 @@ class JwtAppService {
 
   static readonly jwtOptions = {
     secret: JwtAppService.SECRET,
-    expiresIn: '1 day',
+    expiresIn: '1d',
   };
 }
 

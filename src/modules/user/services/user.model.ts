@@ -1,6 +1,12 @@
 import RolesEntity from '../entities/roles.entity';
 import UserEntity from '../entities/user.entity';
 
+enum ROLES_ID {
+  ADMIN = 1,
+  MANAGER = 2,
+  PLAYER = 3,
+}
+
 class Roles {
   constructor(user: Partial<Roles>) {
     Object.assign(this, user);
@@ -51,4 +57,4 @@ class User {
   }
 }
 
-export { User, Roles };
+export { User, Roles, ROLES_ID };
