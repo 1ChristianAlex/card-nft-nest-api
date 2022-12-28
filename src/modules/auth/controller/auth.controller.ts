@@ -4,14 +4,14 @@ import AuthService from '../services/auth.service';
 import { LoginOutputDto } from './auth.dto';
 import { Request as IRequest } from 'express';
 import { User } from 'src/modules/user/services/user.model';
-import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from 'src/app/config';
+import JwtAppService from '../services/jwt.service';
 
 @Controller('auth')
 class AuthController {
   constructor(
     private _authService: AuthService,
-    private jwtService: JwtService,
+    private jwtAppService: JwtAppService,
   ) {}
 
   @Post('login')
@@ -23,16 +23,7 @@ class AuthController {
 
     const userDto = UserOutputDto.adapterUserToDto(loginData);
 
-    return new LoginOutputDto(
-      userDto,
-      this.jwtService.sign(
-        { ...userDto },
-        {
-          secret: jwtConstants.secret,
-          expiresIn: '1 day',
-        },
-      ),
-    );
+    return new LoginOutputDto(userDto, this.jwtAppService.doSing(userDto));
   }
 }
 
