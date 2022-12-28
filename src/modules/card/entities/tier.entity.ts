@@ -4,12 +4,17 @@ import {
   Entity,
   UpdateDateColumn,
   CreateDateColumn,
-  ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import CardEntity from './card.entity';
 
 @Entity({ schema: 'card' })
 class TierEntity {
+  constructor(name: string, description: string) {
+    this.name = name;
+    this.description = description;
+  }
+
   @PrimaryGeneratedColumn()
   public id: number;
 
@@ -25,7 +30,7 @@ class TierEntity {
   @CreateDateColumn()
   public createAt?: Date;
 
-  @ManyToOne(() => CardEntity, (card) => card.tier)
+  @OneToMany(() => CardEntity, (card) => card.tier)
   public card: CardEntity;
 }
 

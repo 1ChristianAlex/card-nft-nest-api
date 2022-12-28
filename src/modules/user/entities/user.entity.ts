@@ -11,8 +11,22 @@ import {
 import RolesEntity from './roles.entity';
 import WalletEntity from './wallet.entity';
 
+interface IUserEntityConstructor {
+  name: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role?: RolesEntity;
+  card?: CardEntity;
+  wallet?: WalletEntity;
+}
+
 @Entity({ schema: 'user' })
 class UserEntity {
+  constructor(entityValue: IUserEntityConstructor) {
+    Object.assign(this, entityValue);
+  }
+
   @PrimaryGeneratedColumn()
   public id: number;
 

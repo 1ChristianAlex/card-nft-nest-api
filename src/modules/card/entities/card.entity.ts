@@ -34,7 +34,7 @@ class CardEntity {
   @CreateDateColumn()
   public createAt?: Date;
 
-  @OneToMany(() => TierEntity, (tier) => tier.card)
+  @ManyToOne(() => TierEntity, (tier) => tier.card)
   public tier: TierEntity;
 
   @OneToMany(() => ThumbsEntity, (role) => role.card)

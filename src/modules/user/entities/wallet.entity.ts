@@ -19,6 +19,15 @@ class WalletEntity {
   @Column({ type: 'integer' })
   public deckAmount: number;
 
+  @Column({ type: 'integer', default: 1 })
+  public claims: number;
+
+  @Column({ type: 'integer', default: 8 })
+  public gambles: number;
+
+  @Column({ type: 'timestamp' })
+  public nextGamble?: Date;
+
   @UpdateDateColumn()
   public updatedDate?: Date;
 

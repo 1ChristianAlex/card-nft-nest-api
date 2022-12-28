@@ -10,6 +10,10 @@ import UserEntity from './user.entity';
 
 @Entity({ schema: 'user' })
 class RolesEntity {
+  constructor(description: string) {
+    this.description = description;
+  }
+
   @PrimaryGeneratedColumn()
   public id: number;
 
