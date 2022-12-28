@@ -1,4 +1,4 @@
-import { User } from '../services/user.model';
+import { Roles, User } from '../services/user.model';
 import { IsEmail, IsNotEmpty, IsNumber, MinLength } from 'class-validator';
 
 class UserOutputDto {
@@ -10,7 +10,9 @@ class UserOutputDto {
   public name: string;
   public lastName: string;
   public email: string;
-  public role: number;
+  public isActive: boolean;
+
+  public role: Roles;
 
   static adapterUserToDto(user: User) {
     return new UserOutputDto({
@@ -19,6 +21,7 @@ class UserOutputDto {
       lastName: user.lastName,
       email: user.email,
       role: user.role,
+      isActive: user.isActive,
     });
   }
 }
@@ -38,9 +41,8 @@ class UserInputDto {
   @IsNotEmpty()
   public email: string;
 
-  @IsNotEmpty()
   @IsNumber()
-  public role: number;
+  public role = 3;
 
   @IsNotEmpty()
   @MinLength(6)
@@ -52,8 +54,9 @@ class UserInputDto {
       name: user.name,
       lastName: user.lastName,
       email: user.email,
-      role: user.role,
+      role: new Roles({ id: user.role }),
       password: user.password,
+      isActive: true,
     });
   }
 }

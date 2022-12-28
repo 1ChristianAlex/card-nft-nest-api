@@ -1,40 +1,30 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import PasswordHash from 'src/lib/passwordHash/passwordHash.service';
+import { In, Repository } from 'typeorm';
+import RolesEntity from '../entities/roles.entity';
+import UserEntity from '../entities/user.entity';
 import { User } from './user.model';
 
 @Injectable()
 class UserService {
-  constructor(private _passwordHash: PasswordHash) {}
+  constructor(
+    private _passwordHash: PasswordHash,
+    @InjectRepository(UserEntity)
+    private usersRepository: Repository<UserEntity>,
+    @InjectRepository(RolesEntity)
+    private roleRepository: Repository<RolesEntity>,
+  ) {}
 
   public async getAllUser(): Promise<User[]> {
-    return [
-      new User({
-        name: 'Christian',
-        lastName: 'Alexsander',
-        email: 'christianalexbh@hotmail.com',
-        role: 1,
-        password:
-          '$2b$10$laAiJDQQP471pyawvu8LQOcoxwCeh9vxBRzlFYuRTCoFqz8JJZKcm',
-        id: 1,
-      }),
+    const allUsers = await this.usersRepository.find();
 
-      new User({
-        name: 'Pedro',
-        lastName: 'Anjos',
-        email: 'pedro@hotmail.com',
-        role: 1,
-        password: 'algumasenha',
-        id: 2,
-      }),
-    ];
+    return allUsers.map(User.adapterEntityToModel);
   }
 
   public async getUserById(id: number) {
-    const users = await this.getAllUser();
-
-    const userFinded = users.find((item) => item.id === id);
-
-    return this.returnIfExists(userFinded);
+    const userById = await this.usersRepository.findOneBy({ id });
+    return this.returnIfExists(User.adapterEntityToModel(userById));
   }
 
   private returnIfExists(userFinded: User) {
@@ -46,20 +36,28 @@ class UserService {
   }
 
   public async getUserByEmail(email: string) {
-    const users = await this.getAllUser();
+    const [userByEmail] = await this.usersRepository.find({
+      where: { email },
+      relations: { role: true },
+    });
 
-    const userFinded = users.find((item) => item.email === email);
-
-    return this.returnIfExists(userFinded);
+    return this.returnIfExists(User.adapterEntityToModel(userByEmail));
   }
 
   public async createNewUser(user: User) {
-    const newUser = new User({
-      ...user,
+    const role = await this.roleRepository.findOneBy({ id: user.role.id ?? 3 });
+
+    const newUser = new UserEntity({
       password: await this._passwordHash.genHash(user.password),
+      email: user.email,
+      lastName: user.lastName,
+      name: user.name,
+      role: role,
     });
 
-    return newUser;
+    const userSaved = await this.usersRepository.save(newUser);
+
+    return User.adapterEntityToModel(userSaved);
   }
 }
 

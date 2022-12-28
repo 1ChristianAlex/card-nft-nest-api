@@ -44,8 +44,16 @@ class UserController {
   }
 
   @Post()
-  async createUser(@Body() userInput: UserInputDto): Promise<UserOutputDto> {
-    console.log(userInput);
+  async createUser(
+    @Body() userInput: UserInputDto,
+    @UserDecorator() userToken: UserOutputDto,
+  ): Promise<UserOutputDto> {
+    if (
+      (userToken.role.id !== 1 && userInput.role === 1) ||
+      (![1, 2].includes(userToken.role.id) && userInput.role === 2)
+    ) {
+      throw new Error('User has no correct privileges');
+    }
 
     const user = UserInputDto.adapterDtoToUser(userInput);
 

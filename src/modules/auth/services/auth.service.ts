@@ -18,7 +18,7 @@ class AuthService {
       }
 
       return user;
-    } catch {
+    } catch (error) {
       throw new Error('Wrong email/password');
     }
   }
