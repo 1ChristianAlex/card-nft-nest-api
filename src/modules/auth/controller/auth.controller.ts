@@ -4,7 +4,6 @@ import AuthService from '../services/auth.service';
 import { LoginOutputDto } from './auth.dto';
 import { Request as IRequest } from 'express';
 import { User } from 'src/modules/user/services/user.model';
-import { jwtConstants } from 'src/app/config';
 import JwtAppService from '../services/jwt.service';
 
 @Controller('auth')
