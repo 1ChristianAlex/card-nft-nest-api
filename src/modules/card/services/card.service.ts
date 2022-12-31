@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import WalletService from 'src/modules/card/services/wallet.service';
 import { Repository } from 'typeorm';
 import CardEntity from '../entities/card.entity';
+import { CARD_STATUS_ENUM } from '../entities/cardStatus.entity';
 import ThumbsEntity from '../entities/thumbs.entity';
 import TierEntity from '../entities/tier.entity';
 import { CardModel } from './card.model';
@@ -28,7 +29,7 @@ class CardService {
     const cardEntity = new CardEntity({
       name: cardToCreate.name,
       description: cardToCreate.description,
-      price: cardToCreate.price + lowestTier.value,
+      price: cardToCreate.price,
       likes: cardToCreate.likes ?? 0,
       tier: lowestTier,
       thumbnail: null,
@@ -85,12 +86,15 @@ class CardService {
   }
 
   public async getRandomCard(userId: number) {
+    await this.walletService.decreaseGambles(userId);
+
     const randomId = await this.cardRepository
       .createQueryBuilder('card')
+      .select('card.id')
       // .innerJoinAndSelect(TierEntity, 'tier', 'card.tierId = tier.id')
       // .innerJoinAndSelect(ThumbsEntity, 'thumb', 'card.id = thumb.cardId')
-      // .relation(ThumbsEntity, 'thumbs')
-      .where('card.walletId is NULL')
+      .where(`card.statusId = ${CARD_STATUS_ENUM.FREE}`)
+      .andWhere('card.walletId is NULL')
       .orderBy('RANDOM()')
       .getOneOrFail();
 
@@ -101,12 +105,42 @@ class CardService {
       relations: {
         tier: true,
         thumbnail: true,
+        status: true,
       },
     });
 
-    await this.walletService.decreaseGambles(userId);
+    random.status.id = CARD_STATUS_ENUM.IN_GAMBLE;
+
+    await this.cardRepository.update(
+      { id: random.id },
+      { status: random.status },
+    );
+
+    setTimeout(() => this.renewCardStatus(random.id), 5000);
 
     return this.cardPriceService.applyTierMultiplayer(random);
+  }
+
+  private async renewCardStatus(cardId: number) {
+    const [cardItem] = await this.cardRepository.find({
+      where: {
+        id: cardId,
+      },
+      relations: {
+        status: true,
+      },
+    });
+
+    if (cardItem.status.id !== CARD_STATUS_ENUM.CLAIMED) {
+      await this.cardRepository.update(
+        { id: cardItem.id },
+        {
+          status: {
+            id: CARD_STATUS_ENUM.FREE,
+          },
+        },
+      );
+    }
   }
 }
 

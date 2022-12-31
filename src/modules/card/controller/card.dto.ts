@@ -68,4 +68,15 @@ class CardUpdateInputDto extends CardInputDto {
     });
   }
 }
-export { CardInputDto, CardUpdateInputDto };
+
+class CardClaimDto {
+  constructor(id: number) {
+    this.id = id;
+  }
+
+  @IsNumber()
+  @IsNotEmpty()
+  public id: number;
+}
+
+export { CardInputDto, CardUpdateInputDto, CardClaimDto };

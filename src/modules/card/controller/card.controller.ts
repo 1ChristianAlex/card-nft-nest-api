@@ -12,12 +12,16 @@ import { JwtAuthGuard } from 'src/modules/auth/services/jwt-auth.guard';
 import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 import UserDecorator from 'src/modules/user/services/user.decorator';
 import CardService from '../services/card.service';
-import { CardInputDto, CardUpdateInputDto } from './card.dto';
+import WalletService from '../services/wallet.service';
+import { CardClaimDto, CardInputDto, CardUpdateInputDto } from './card.dto';
 
 @Controller('card')
 @UseGuards(JwtAuthGuard)
 class CardController {
-  constructor(private cardService: CardService) {}
+  constructor(
+    private cardService: CardService,
+    private walletService: WalletService,
+  ) {}
 
   @Post()
   public async registerNewCard(
@@ -55,6 +59,18 @@ class CardController {
       const update = await this.cardService.getRandomCard(user.id);
 
       return update;
+    } catch (error) {
+      return new HttpException(error.message, HttpStatus.BAD_GATEWAY);
+    }
+  }
+
+  @Post('claim')
+  async claimCard(
+    @Body() cardClaim: CardClaimDto,
+    @UserDecorator() user: UserOutputDto,
+  ) {
+    try {
+      await this.walletService.claimCard(cardClaim.id, user.id);
     } catch (error) {
       return new HttpException(error.message, HttpStatus.BAD_GATEWAY);
     }

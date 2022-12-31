@@ -8,6 +8,12 @@ import {
 } from 'typeorm';
 import CardEntity from './card.entity';
 
+enum CARD_STATUS_ENUM {
+  FREE = 1,
+  IN_GAMBLE,
+  CLAIMED,
+}
+
 @Entity({
   schema: CardStatusEntity.tableInfo.schema,
   name: CardStatusEntity.tableInfo.name,
@@ -38,4 +44,5 @@ class CardStatusEntity {
   };
 }
 
+export { CARD_STATUS_ENUM };
 export default CardStatusEntity;
