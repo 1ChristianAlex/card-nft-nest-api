@@ -3,6 +3,7 @@ import RolesEntity from '../../modules/user/entities/roles.entity';
 import UserEntity from '../../modules/user/entities/user.entity';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import TierEntity from '../../modules/card/entities/tier.entity';
+import WalletEntity from '../../modules/user/entities/wallet.entity';
 
 export class initalSeed2672241522331 implements MigrationInterface {
   private readonly adminRole = new RolesEntity('Admin');
@@ -13,6 +14,11 @@ export class initalSeed2672241522331 implements MigrationInterface {
     await this.insertAdminUser(queryRunner);
 
     await this.insertTiers(queryRunner);
+
+    await queryRunner.manager.save(
+      WalletEntity,
+      new WalletEntity({ nextGamble: new Date(), user: { id: 1 } }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -25,9 +31,9 @@ export class initalSeed2672241522331 implements MigrationInterface {
 
   private async insertTiers(queryRunner: QueryRunner) {
     const tiers = [
-      new TierEntity('Silver', 'Silver Tier Card'),
-      new TierEntity('Gold', 'Gold Tier Card'),
-      new TierEntity('Platinum', 'Platinum Tier Card'),
+      new TierEntity('Silver', 'Silver Tier Card', 1),
+      new TierEntity('Gold', 'Gold Tier Card', 2),
+      new TierEntity('Platinum', 'Platinum Tier Card', 3),
     ];
 
     await queryRunner.manager.save(TierEntity, tiers);

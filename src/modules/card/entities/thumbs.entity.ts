@@ -1,10 +1,10 @@
 import {
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   Entity,
   UpdateDateColumn,
   CreateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 import CardEntity from './card.entity';
 

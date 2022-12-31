@@ -10,9 +10,11 @@ import CardEntity from './card.entity';
 
 @Entity({ schema: 'card' })
 class TierEntity {
-  constructor(name: string, description: string) {
+  constructor(name: string, description: string, value: number) {
     this.name = name;
     this.description = description;
+
+    this.value = value;
   }
 
   @PrimaryGeneratedColumn()
@@ -23,6 +25,9 @@ class TierEntity {
 
   @Column({ type: 'text' })
   public description: string;
+
+  @Column({ type: 'integer' })
+  public value: number;
 
   @UpdateDateColumn()
   public updatedDate?: Date;

@@ -10,6 +10,7 @@ import CardEntity from 'src/modules/card/entities/card.entity';
 import TierEntity from 'src/modules/card/entities/tier.entity';
 import ThumbsEntity from 'src/modules/card/entities/thumbs.entity';
 import WalletEntity from 'src/modules/user/entities/wallet.entity';
+import CardModule from 'src/modules/card/card.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import WalletEntity from 'src/modules/user/entities/wallet.entity';
     }),
     UserModule,
     AuthModule,
+    CardModule,
   ],
 })
 class AppModule {}

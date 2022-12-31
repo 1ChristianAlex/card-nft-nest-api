@@ -19,6 +19,7 @@ interface IUserEntityConstructor {
   role?: RolesEntity;
   card?: CardEntity;
   wallet?: WalletEntity;
+  id?: number;
 }
 
 @Entity({ schema: 'user' })
