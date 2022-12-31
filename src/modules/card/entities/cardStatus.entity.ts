@@ -1,29 +1,27 @@
 import {
+  Entity,
   PrimaryGeneratedColumn,
   Column,
-  Entity,
   UpdateDateColumn,
   CreateDateColumn,
-  ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import CardEntity from './card.entity';
 
 @Entity({
-  schema: ThumbsEntity.tableInfo.schema,
-  name: ThumbsEntity.tableInfo.name,
+  schema: CardStatusEntity.tableInfo.schema,
+  name: CardStatusEntity.tableInfo.name,
 })
-class ThumbsEntity {
+class CardStatusEntity {
+  constructor(body: Partial<CardStatusEntity>) {
+    Object.assign(this, body);
+  }
+
   @PrimaryGeneratedColumn()
   public id: number;
 
   @Column({ type: 'text' })
-  public description: string;
-
-  @Column({ type: 'text' })
-  public path: string;
-
-  @ManyToOne(() => CardEntity, (card) => card.thumbnail)
-  public card: CardEntity;
+  public name: string;
 
   @UpdateDateColumn()
   public updatedDate?: Date;
@@ -31,10 +29,13 @@ class ThumbsEntity {
   @CreateDateColumn()
   public createAt?: Date;
 
+  @OneToMany(() => CardEntity, (card) => card.tier)
+  public card: CardEntity;
+
   static readonly tableInfo = {
-    name: 'thumbs',
+    name: 'status',
     schema: 'card',
   };
 }
 
-export default ThumbsEntity;
+export default CardStatusEntity;

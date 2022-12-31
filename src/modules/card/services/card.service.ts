@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import WalletEntity from 'src/modules/user/entities/wallet.entity';
-import UserService from 'src/modules/user/services/user.service';
-import WalletService from 'src/modules/user/services/wallet.service';
-import { FindOptionsOrderValue, IsNull, Repository, LessThan } from 'typeorm';
+import WalletService from 'src/modules/card/services/wallet.service';
+import { Repository } from 'typeorm';
 import CardEntity from '../entities/card.entity';
 import ThumbsEntity from '../entities/thumbs.entity';
 import TierEntity from '../entities/tier.entity';
@@ -35,6 +33,7 @@ class CardService {
       tier: lowestTier,
       thumbnail: null,
       user: { id: userId },
+      status: { id: 1 },
     });
 
     const cardCreated = await this.cardRepository.save(cardEntity);

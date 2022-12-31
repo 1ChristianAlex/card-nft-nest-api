@@ -9,7 +9,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import RolesEntity from './roles.entity';
-import WalletEntity from './wallet.entity';
+import WalletEntity from '../../card/entities/wallet.entity';
 
 interface IUserEntityConstructor {
   name: string;
@@ -22,7 +22,10 @@ interface IUserEntityConstructor {
   id?: number;
 }
 
-@Entity({ schema: 'user' })
+@Entity({
+  schema: UserEntity.tableInfo.schema,
+  name: UserEntity.tableInfo.name,
+})
 class UserEntity {
   constructor(entityValue: IUserEntityConstructor) {
     Object.assign(this, entityValue);
@@ -60,6 +63,11 @@ class UserEntity {
 
   @OneToMany(() => WalletEntity, (wallet) => wallet.user)
   public wallet: WalletEntity;
+
+  static readonly tableInfo = {
+    name: 'user',
+    schema: 'user',
+  };
 }
 
 export default UserEntity;

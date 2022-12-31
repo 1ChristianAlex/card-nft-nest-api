@@ -1,4 +1,4 @@
-import CardEntity from '../../card/entities/card.entity';
+import CardEntity from './card.entity';
 import {
   Entity,
   Column,
@@ -6,8 +6,9 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
-import UserEntity from './user.entity';
+import UserEntity from '../../user/entities/user.entity';
 
 interface IWalletEntityConstructor {
   id: number;
@@ -19,7 +20,10 @@ interface IWalletEntityConstructor {
   user?: Partial<UserEntity>;
 }
 
-@Entity({ schema: 'user' })
+@Entity({
+  schema: WalletEntity.tableInfo.schema,
+  name: WalletEntity.tableInfo.name,
+})
 class WalletEntity {
   constructor(body: Partial<IWalletEntityConstructor>) {
     Object.assign(this, body);
@@ -52,8 +56,13 @@ class WalletEntity {
   @ManyToOne(() => UserEntity, (user) => user.wallet)
   public user: UserEntity;
 
-  @ManyToOne(() => CardEntity, (user) => user.wallet)
+  @OneToMany(() => CardEntity, (user) => user.wallet)
   public card: CardEntity;
+
+  static readonly tableInfo = {
+    name: 'wallet',
+    schema: 'card',
+  };
 }
 
 export default WalletEntity;

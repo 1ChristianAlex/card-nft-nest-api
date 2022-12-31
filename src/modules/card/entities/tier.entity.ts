@@ -8,7 +8,10 @@ import {
 } from 'typeorm';
 import CardEntity from './card.entity';
 
-@Entity({ schema: 'card' })
+@Entity({
+  schema: TierEntity.tableInfo.schema,
+  name: TierEntity.tableInfo.name,
+})
 class TierEntity {
   constructor(name: string, description: string, value: number) {
     this.name = name;
@@ -37,6 +40,11 @@ class TierEntity {
 
   @OneToMany(() => CardEntity, (card) => card.tier)
   public card: CardEntity;
+
+  static readonly tableInfo = {
+    name: 'tiers',
+    schema: 'card',
+  };
 }
 
 export default TierEntity;

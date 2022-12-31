@@ -9,8 +9,9 @@ import RolesEntity from 'src/modules/user/entities/roles.entity';
 import CardEntity from 'src/modules/card/entities/card.entity';
 import TierEntity from 'src/modules/card/entities/tier.entity';
 import ThumbsEntity from 'src/modules/card/entities/thumbs.entity';
-import WalletEntity from 'src/modules/user/entities/wallet.entity';
+import WalletEntity from 'src/modules/card/entities/wallet.entity';
 import CardModule from 'src/modules/card/card.module';
+import CardStatusEntity from 'src/modules/card/entities/cardStatus.entity';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import CardModule from 'src/modules/card/card.module';
         TierEntity,
         ThumbsEntity,
         WalletEntity,
+        CardStatusEntity,
       ],
       synchronize: true,
       logging: true,

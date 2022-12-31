@@ -3,7 +3,8 @@ import RolesEntity from '../../modules/user/entities/roles.entity';
 import UserEntity from '../../modules/user/entities/user.entity';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import TierEntity from '../../modules/card/entities/tier.entity';
-import WalletEntity from '../../modules/user/entities/wallet.entity';
+import WalletEntity from '../../modules/card/entities/wallet.entity';
+import CardStatusEntity from '../../modules/card/entities/cardStatus.entity';
 
 export class initalSeed2672241522331 implements MigrationInterface {
   private readonly adminRole = new RolesEntity('Admin');
@@ -30,6 +31,14 @@ export class initalSeed2672241522331 implements MigrationInterface {
   }
 
   private async insertTiers(queryRunner: QueryRunner) {
+    const cardStatus = [
+      new CardStatusEntity({ name: 'Free' }),
+      new CardStatusEntity({ name: 'In Gamble' }),
+      new CardStatusEntity({ name: 'Claimed' }),
+    ];
+
+    await queryRunner.manager.save(CardStatusEntity, cardStatus);
+
     const tiers = [
       new TierEntity('Silver', 'Silver Tier Card', 1),
       new TierEntity('Gold', 'Gold Tier Card', 2),

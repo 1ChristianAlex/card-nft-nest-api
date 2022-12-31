@@ -10,7 +10,8 @@ import {
 import ThumbsEntity from './thumbs.entity';
 import TierEntity from './tier.entity';
 import UserEntity from '../../user/entities/user.entity';
-import WalletEntity from '../../user/entities/wallet.entity';
+import WalletEntity from './wallet.entity';
+import CardStatusEntity from './cardStatus.entity';
 
 interface ICardEntityConstructor {
   name: string;
@@ -21,9 +22,13 @@ interface ICardEntityConstructor {
   thumbnail: ThumbsEntity[];
   id?: number;
   user?: Partial<UserEntity>;
+  status?: Partial<CardStatusEntity>;
 }
 
-@Entity({ schema: 'card' })
+@Entity({
+  schema: CardEntity.tableInfo.schema,
+  name: CardEntity.tableInfo.name,
+})
 class CardEntity {
   constructor(card: ICardEntityConstructor) {
     Object.assign(this, card);
@@ -53,6 +58,9 @@ class CardEntity {
   @ManyToOne(() => TierEntity, (tier) => tier.card)
   public tier: TierEntity;
 
+  @ManyToOne(() => CardStatusEntity, (tier) => tier.card)
+  public status: CardStatusEntity;
+
   @OneToMany(() => ThumbsEntity, (thumb) => thumb.card)
   public thumbnail: ThumbsEntity[];
 
@@ -61,6 +69,11 @@ class CardEntity {
 
   @ManyToOne(() => WalletEntity, (user) => user.card)
   public wallet: WalletEntity;
+
+  static readonly tableInfo = {
+    name: 'card',
+    schema: 'card',
+  };
 }
 
 export default CardEntity;
