@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import WalletEntity from './entities/wallet.entity';
-import WalletService from './services/wallet.service';
+import DeckService from '../deck/services/deck.service';
 import CardController from './controller/card.controller';
 import CardEntity from './entities/card.entity';
 import ThumbsEntity from './entities/thumbs.entity';
@@ -11,15 +10,8 @@ import CardPriceService from './services/cardPrice.service';
 
 @Module({
   controllers: [CardController],
-  providers: [CardService, CardPriceService, WalletService],
-  imports: [
-    TypeOrmModule.forFeature([
-      CardEntity,
-      ThumbsEntity,
-      TierEntity,
-      WalletEntity,
-    ]),
-  ],
+  providers: [CardService, CardPriceService, DeckService],
+  imports: [TypeOrmModule.forFeature([CardEntity, ThumbsEntity, TierEntity])],
 })
 class CardModule {}
 

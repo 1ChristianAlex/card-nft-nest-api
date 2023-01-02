@@ -12,7 +12,7 @@ import { JwtAuthGuard } from 'src/modules/auth/services/jwt-auth.guard';
 import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 import UserDecorator from 'src/modules/user/services/user.decorator';
 import CardService from '../services/card.service';
-import WalletService from '../services/wallet.service';
+import DeckService from '../../deck/services/deck.service';
 import { CardClaimDto, CardInputDto, CardUpdateInputDto } from './card.dto';
 
 @Controller('card')
@@ -20,7 +20,7 @@ import { CardClaimDto, CardInputDto, CardUpdateInputDto } from './card.dto';
 class CardController {
   constructor(
     private cardService: CardService,
-    private walletService: WalletService,
+    private walletService: DeckService,
   ) {}
 
   @Post()

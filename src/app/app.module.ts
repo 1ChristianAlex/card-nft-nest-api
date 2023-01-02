@@ -9,12 +9,15 @@ import RolesEntity from 'src/modules/user/entities/roles.entity';
 import CardEntity from 'src/modules/card/entities/card.entity';
 import TierEntity from 'src/modules/card/entities/tier.entity';
 import ThumbsEntity from 'src/modules/card/entities/thumbs.entity';
-import WalletEntity from 'src/modules/card/entities/wallet.entity';
+import DeckEntity from 'src/modules/deck/entities/deck.entity';
 import CardModule from 'src/modules/card/card.module';
 import CardStatusEntity from 'src/modules/card/entities/cardStatus.entity';
+import { ScheduleModule } from '@nestjs/schedule';
+import DeckModule from 'src/modules/deck/deck.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: ormDatabaseContext.type as 'postgres',
@@ -29,7 +32,7 @@ import CardStatusEntity from 'src/modules/card/entities/cardStatus.entity';
         CardEntity,
         TierEntity,
         ThumbsEntity,
-        WalletEntity,
+        DeckEntity,
         CardStatusEntity,
       ],
       synchronize: true,
@@ -38,6 +41,7 @@ import CardStatusEntity from 'src/modules/card/entities/cardStatus.entity';
     UserModule,
     AuthModule,
     CardModule,
+    DeckModule,
   ],
 })
 class AppModule {}

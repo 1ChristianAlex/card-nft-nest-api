@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import WalletService from 'src/modules/card/services/wallet.service';
+import DeckService from 'src/modules/deck/services/deck.service';
 import { Repository } from 'typeorm';
 import CardEntity from '../entities/card.entity';
 import { CARD_STATUS_ENUM } from '../entities/cardStatus.entity';
@@ -17,7 +17,7 @@ class CardService {
     @InjectRepository(TierEntity)
     private tierRepository: Repository<TierEntity>,
     private cardPriceService: CardPriceService,
-    private walletService: WalletService,
+    private deckService: DeckService,
   ) {}
 
   public async registerNewCard(cardToCreate: CardModel, userId: number) {
@@ -86,7 +86,7 @@ class CardService {
   }
 
   public async getRandomCard(userId: number) {
-    await this.walletService.decreaseGambles(userId);
+    await this.deckService.decreaseGambles(userId);
 
     const randomId = await this.cardRepository
       .createQueryBuilder('card')

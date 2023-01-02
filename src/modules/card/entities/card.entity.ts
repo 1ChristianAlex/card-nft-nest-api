@@ -10,7 +10,7 @@ import {
 import ThumbsEntity from './thumbs.entity';
 import TierEntity from './tier.entity';
 import UserEntity from '../../user/entities/user.entity';
-import WalletEntity from './wallet.entity';
+import DeckEntity from '../../deck/entities/deck.entity';
 import CardStatusEntity from './cardStatus.entity';
 
 interface ICardEntityConstructor {
@@ -67,8 +67,8 @@ class CardEntity {
   @ManyToOne(() => UserEntity, (user) => user.card)
   public user: UserEntity;
 
-  @ManyToOne(() => WalletEntity, (user) => user.card)
-  public wallet: WalletEntity;
+  @ManyToOne(() => DeckEntity, (user) => user.card)
+  public wallet: DeckEntity;
 
   static readonly tableInfo = {
     name: 'card',

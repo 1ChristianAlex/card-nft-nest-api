@@ -9,7 +9,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import RolesEntity from './roles.entity';
-import WalletEntity from '../../card/entities/wallet.entity';
+import DeckEntity from '../../deck/entities/deck.entity';
 
 interface IUserEntityConstructor {
   name: string;
@@ -18,7 +18,7 @@ interface IUserEntityConstructor {
   password: string;
   role?: RolesEntity;
   card?: CardEntity;
-  wallet?: WalletEntity;
+  wallet?: DeckEntity;
   id?: number;
 }
 
@@ -61,8 +61,8 @@ class UserEntity {
   @OneToMany(() => CardEntity, (card) => card.user)
   public card: CardEntity;
 
-  @OneToMany(() => WalletEntity, (wallet) => wallet.user)
-  public wallet: WalletEntity;
+  @OneToMany(() => DeckEntity, (wallet) => wallet.user)
+  public wallet: DeckEntity;
 
   static readonly tableInfo = {
     name: 'user',

@@ -3,10 +3,11 @@ import RolesEntity from '../../modules/user/entities/roles.entity';
 import UserEntity from '../../modules/user/entities/user.entity';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import TierEntity from '../../modules/card/entities/tier.entity';
-import WalletEntity from '../../modules/card/entities/wallet.entity';
+
 import CardStatusEntity, {
   CARD_STATUS_ENUM,
 } from '../../modules/card/entities/cardStatus.entity';
+import DeckEntity from '../../modules/deck/entities/deck.entity';
 
 export class initalSeed2672241522331 implements MigrationInterface {
   private readonly adminRole = new RolesEntity('Admin');
@@ -19,8 +20,8 @@ export class initalSeed2672241522331 implements MigrationInterface {
     await this.insertTiers(queryRunner);
 
     await queryRunner.manager.save(
-      WalletEntity,
-      new WalletEntity({ nextGamble: new Date(), user: { id: 1 } }),
+      DeckEntity,
+      new DeckEntity({ nextGamble: new Date(), user: { id: 1 } }),
     );
   }
 

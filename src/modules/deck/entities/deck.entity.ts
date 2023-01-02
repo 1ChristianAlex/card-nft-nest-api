@@ -1,4 +1,4 @@
-import CardEntity from './card.entity';
+import CardEntity from '../../card/entities/card.entity';
 import {
   Entity,
   Column,
@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import UserEntity from '../../user/entities/user.entity';
 
-interface IWalletEntityConstructor {
+interface IDeckEntityConstructor {
   id: number;
   value: number;
   deckAmount: number;
@@ -21,11 +21,11 @@ interface IWalletEntityConstructor {
 }
 
 @Entity({
-  schema: WalletEntity.tableInfo.schema,
-  name: WalletEntity.tableInfo.name,
+  schema: DeckEntity.tableInfo.schema,
+  name: DeckEntity.tableInfo.name,
 })
-class WalletEntity {
-  constructor(body: Partial<IWalletEntityConstructor>) {
+class DeckEntity {
+  constructor(body: Partial<IDeckEntityConstructor>) {
     Object.assign(this, body);
   }
 
@@ -47,6 +47,9 @@ class WalletEntity {
   @Column({ type: 'timestamp' })
   public nextGamble?: Date;
 
+  @Column({ type: 'timestamp' })
+  public nextDaily?: Date;
+
   @UpdateDateColumn()
   public updatedDate?: Date;
 
@@ -60,9 +63,9 @@ class WalletEntity {
   public card: CardEntity;
 
   static readonly tableInfo = {
-    name: 'wallet',
+    name: 'deck',
     schema: 'card',
   };
 }
 
-export default WalletEntity;
+export default DeckEntity;
