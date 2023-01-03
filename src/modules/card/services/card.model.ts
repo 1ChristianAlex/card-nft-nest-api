@@ -81,4 +81,12 @@ class CardModel {
   }
 }
 
-export { CardModel, CardTier, Thumbnail, CARD_TIER };
+class CardValueTrade {
+  constructor(
+    public userId: number,
+    public cardList: CardModel[],
+    public value = 0,
+  ) {}
+}
+
+export { CardModel, CardTier, Thumbnail, CARD_TIER, CardValueTrade };

@@ -27,7 +27,7 @@ class DeckService {
   }
 
   async getUserWaller(userId: number) {
-    const [userWallet] = await this.deckRepository.find({
+    const userWallet = await this.deckRepository.findOneOrFail({
       where: { user: { id: userId } },
       relations: {
         user: true,
@@ -37,15 +37,15 @@ class DeckService {
     return userWallet;
   }
 
-  async refreshClaimdedTotal(userWallet: DeckEntity) {
+  async refreshClaimdedTotal(userDeck: DeckEntity) {
     const cardsTotal = await this.cardRepository
       .createQueryBuilder('card')
-      .where(`card.walletId = ${userWallet.id}`)
+      .where(`card.walletId = ${userDeck.id}`)
       .getCount();
 
     await this.deckRepository.update(
-      { id: userWallet.id },
-      { deckAmount: cardsTotal, claims: userWallet.claims - 1 },
+      { id: userDeck.id },
+      { deckAmount: cardsTotal, claims: userDeck.claims - 1 },
     );
   }
 
@@ -56,15 +56,22 @@ class DeckService {
       throw new Error('User can not claim right now');
     }
 
-    await this.cardRepository.update(
-      { id: cardId },
-      {
+    const cardToBeClaimed = await this.cardRepository.findOneOrFail({
+      where: {
+        id: cardId,
         status: {
-          id: CARD_STATUS_ENUM.CLAIMED,
+          id: CARD_STATUS_ENUM.IN_GAMBLE,
         },
-        wallet: userWallet,
       },
-    );
+      relations: { status: true },
+    });
+
+    await this.cardRepository.update(cardToBeClaimed, {
+      status: {
+        id: CARD_STATUS_ENUM.CLAIMED,
+      },
+      wallet: userWallet,
+    });
 
     this.refreshClaimdedTotal(userWallet);
   }
@@ -94,6 +101,20 @@ class DeckService {
       { user: { id: userId } },
       { gambles: 8, nextGamble: nextDaily },
     );
+  }
+
+  async changeDeckWallet(userId: number, value: number, isIncresing = true) {
+    const userDeck = await this.deckRepository.findOneByOrFail({
+      user: { id: userId },
+    });
+
+    if (isIncresing) {
+      userDeck.wallet + value;
+    } else {
+      userDeck.wallet - value;
+    }
+
+    await this.deckRepository.update({ user: { id: userId } }, userDeck);
   }
 }
 

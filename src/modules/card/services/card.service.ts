@@ -98,31 +98,31 @@ class CardService {
       .orderBy('RANDOM()')
       .getOneOrFail();
 
-    const [random] = await this.cardRepository.find({
-      where: {
-        id: randomId.id,
-      },
-      relations: {
-        tier: true,
-        thumbnail: true,
-        status: true,
-      },
-    });
+    const [random] = await Promise.all([
+      this.cardRepository.findOneOrFail({
+        where: {
+          id: randomId.id,
+        },
+        relations: {
+          tier: true,
+          thumbnail: true,
+          status: true,
+        },
+      }),
 
-    random.status.id = CARD_STATUS_ENUM.IN_GAMBLE;
-
-    await this.cardRepository.update(
-      { id: random.id },
-      { status: random.status },
-    );
+      this.cardRepository.update(
+        { id: randomId.id },
+        { status: { id: CARD_STATUS_ENUM.IN_GAMBLE } },
+      ),
+    ]);
 
     setTimeout(() => this.renewCardStatus(random.id), 5000);
 
     return this.cardPriceService.applyTierMultiplayer(random);
   }
 
-  private async renewCardStatus(cardId: number) {
-    const [cardItem] = await this.cardRepository.find({
+  async renewCardStatus(cardId: number) {
+    const cardItem = await this.cardRepository.findOneOrFail({
       where: {
         id: cardId,
       },

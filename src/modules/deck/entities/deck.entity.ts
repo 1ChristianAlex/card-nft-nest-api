@@ -33,7 +33,7 @@ class DeckEntity {
   public id: number;
 
   @Column({ type: 'integer', default: 0 })
-  public value: number;
+  public wallet: number;
 
   @Column({ type: 'integer', default: 0 })
   public deckAmount: number;
