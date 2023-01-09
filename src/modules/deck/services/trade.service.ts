@@ -4,6 +4,7 @@ import CardEntity from 'src/modules/card/entities/card.entity';
 import { CardValueTrade } from 'src/modules/card/services/card.model';
 import DeckService from 'src/modules/deck/services/deck.service';
 import { In, Repository } from 'typeorm';
+import { IncreaseWalletParams } from './deck.model';
 
 @Injectable()
 class TradeService {
@@ -12,6 +13,13 @@ class TradeService {
     private cardRepository: Repository<CardEntity>,
     private deckService: DeckService,
   ) {}
+
+  async giveCard(cardGived: CardValueTrade, userIdToGive: number) {
+    await this.cardRepository.update(
+      { id: In(cardGived.cardListIds) },
+      { deck: { user: { id: userIdToGive } } },
+    );
+  }
 
   async tradeCards(cardOne: CardValueTrade, cardTradeTwo: CardValueTrade) {
     const [cardsDbOne, cardsDbTwo] = await Promise.all([
@@ -24,9 +32,18 @@ class TradeService {
       this.updateCardListWithNewUser(cardsDbTwo, cardOne.userId),
     ]);
 
+    const walletOne = new IncreaseWalletParams(
+      cardsDbOne.at(0).deck.id,
+      cardOne.value,
+    );
+    const walletTwo = new IncreaseWalletParams(
+      cardsDbTwo.at(0).deck.id,
+      cardTradeTwo.value,
+    );
+
     await Promise.all([
-      this.increaseWalletTrade(cardOne, cardTradeTwo),
-      this.decreaseWalletTrade(cardOne, cardTradeTwo),
+      this.increaseWalletTrade(walletOne, walletTwo),
+      this.decreaseWalletTrade(walletOne, walletTwo),
     ]);
 
     const allCardsId: number[] = [];
@@ -43,32 +60,36 @@ class TradeService {
   }
 
   private decreaseWalletTrade(
-    cardOne: CardValueTrade,
-    cardTradeTwo: CardValueTrade,
+    cardOne: IncreaseWalletParams,
+    cardTradeTwo: IncreaseWalletParams,
   ) {
     return Promise.all([
-      this.deckService.changeDeckWallet(cardOne.userId, cardOne.value, false),
       this.deckService.changeDeckWallet(
-        cardTradeTwo.userId,
-        cardTradeTwo.value,
+        cardOne.deckId,
+        cardOne.walletValue,
+        false,
+      ),
+      this.deckService.changeDeckWallet(
+        cardTradeTwo.deckId,
+        cardTradeTwo.walletValue,
         false,
       ),
     ]);
   }
 
   private increaseWalletTrade(
-    cardOne: CardValueTrade,
-    cardTradeTwo: CardValueTrade,
+    cardOne: IncreaseWalletParams,
+    cardTradeTwo: IncreaseWalletParams,
   ) {
     return Promise.all([
       this.deckService.changeDeckWallet(
-        cardOne.userId,
-        cardTradeTwo.value,
+        cardOne.walletValue,
+        cardTradeTwo.walletValue,
         true,
       ),
       this.deckService.changeDeckWallet(
-        cardTradeTwo.userId,
-        cardOne.value,
+        cardTradeTwo.walletValue,
+        cardOne.walletValue,
         true,
       ),
     ]);
@@ -93,13 +114,6 @@ class TradeService {
     return this.cardRepository.find({
       where: { id: In(cardListIds) },
     });
-  }
-
-  async giveCard(cardGived: CardValueTrade, userIdToGive: number) {
-    await this.cardRepository.update(
-      { id: In(cardGived.cardListIds) },
-      { wallet: { user: { id: userIdToGive } } },
-    );
   }
 }
 

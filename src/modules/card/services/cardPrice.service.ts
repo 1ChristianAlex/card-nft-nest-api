@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import CardEntity from '../entities/card.entity';
-import { CardModel, CARD_TIER } from './card.model';
+import { CARD_TIER } from './card.model';
 
 @Injectable()
 class CardPriceService {
@@ -11,12 +11,14 @@ class CardPriceService {
     private cardRepository: Repository<CardEntity>,
   ) {}
 
-  async applyTierMultiplayer(card: CardEntity) {
-    const priceWithTier = card.price * card.tier.value;
+  async applyTierMultiplier(card: CardEntity) {
+    card.price = this.doTierMultiplier(card);
 
-    card.price = priceWithTier;
+    return card;
+  }
 
-    return CardModel.entryToModel(card);
+  doTierMultiplier(card: CardEntity) {
+    return card.price * card.tier.value;
   }
 
   async checkCardTier(card: CardEntity) {
@@ -33,11 +35,12 @@ class CardPriceService {
     if (card.price >= 800) {
       currentTier = CARD_TIER.PLAT;
     }
-
-    await this.cardRepository.update(
-      { id: card.id },
-      { tier: { id: currentTier } },
-    );
+    if (currentTier !== card.tier?.id) {
+      await this.cardRepository.update(
+        { id: card.id },
+        { tier: { id: currentTier } },
+      );
+    }
   }
 }
 

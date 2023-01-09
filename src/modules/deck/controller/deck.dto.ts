@@ -16,10 +16,10 @@ class DeckTradeInputDto {
   target: DeckTradeItemInputDto;
 }
 
-class CardClaimDto {
+class CardClaimInputDto {
   @IsNumber()
   @IsNotEmpty()
   public id: number;
 }
 
-export { DeckTradeInputDto, DeckTradeItemInputDto, CardClaimDto };
+export { DeckTradeInputDto, DeckTradeItemInputDto, CardClaimInputDto };

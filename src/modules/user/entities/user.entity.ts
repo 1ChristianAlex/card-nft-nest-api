@@ -40,7 +40,7 @@ class UserEntity {
   @Column({ type: 'text' })
   public lastName: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', unique: true })
   public email: string;
 
   @Column({ type: 'text' })

@@ -49,20 +49,27 @@ class UserController {
     @Body() userInput: UserInputDto,
     @UserDecorator() userToken: UserOutputDto,
   ): Promise<UserOutputDto> {
-    if (
-      (userToken.role.id !== ROLES_ID.ADMIN &&
-        userInput.role === ROLES_ID.ADMIN) ||
-      (![ROLES_ID.ADMIN, ROLES_ID.MANAGER].includes(userToken.role.id) &&
-        userInput.role === ROLES_ID.MANAGER)
-    ) {
-      throw new Error('User has no correct privileges');
+    try {
+      if (
+        (userToken.role.id !== ROLES_ID.ADMIN &&
+          userInput.role === ROLES_ID.ADMIN) ||
+        (![ROLES_ID.ADMIN, ROLES_ID.MANAGER].includes(userToken.role.id) &&
+          userInput.role === ROLES_ID.MANAGER)
+      ) {
+        throw new HttpException(
+          'User has no correct privileges',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      const user = UserInputDto.adapterDtoToUser(userInput);
+
+      return UserOutputDto.adapterUserToDto(
+        await this._userService.createNewUser(user),
+      );
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-
-    const user = UserInputDto.adapterDtoToUser(userInput);
-
-    return UserOutputDto.adapterUserToDto(
-      await this._userService.createNewUser(user),
-    );
   }
 }
 

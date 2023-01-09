@@ -4,7 +4,6 @@ import DeckService from 'src/modules/deck/services/deck.service';
 import { Repository } from 'typeorm';
 import CardEntity from '../entities/card.entity';
 import { CARD_STATUS_ENUM } from '../entities/cardStatus.entity';
-import ThumbsEntity from '../entities/thumbs.entity';
 import TierEntity from '../entities/tier.entity';
 import { CardModel } from './card.model';
 import CardPriceService from './cardPrice.service';
@@ -19,6 +18,40 @@ class CardService {
     private cardPriceService: CardPriceService,
     private deckService: DeckService,
   ) {}
+
+  private async findWithRelations(cardUpdate: CardModel): Promise<CardEntity> {
+    return this.cardRepository.findOneOrFail({
+      where: {
+        id: cardUpdate.id,
+      },
+      relations: {
+        tier: true,
+        thumbnail: true,
+      },
+    });
+  }
+
+  private async renewCardStatus(cardId: number) {
+    const cardItem = await this.cardRepository.findOneOrFail({
+      where: {
+        id: cardId,
+      },
+      relations: {
+        status: true,
+      },
+    });
+
+    if (cardItem.status.id !== CARD_STATUS_ENUM.CLAIMED) {
+      await this.cardRepository.update(
+        { id: cardItem.id },
+        {
+          status: {
+            id: CARD_STATUS_ENUM.FREE,
+          },
+        },
+      );
+    }
+  }
 
   public async registerNewCard(cardToCreate: CardModel, userId: number) {
     const [lowestTier] = await this.tierRepository.find({
@@ -39,50 +72,37 @@ class CardService {
 
     const cardCreated = await this.cardRepository.save(cardEntity);
 
-    return this.cardPriceService.applyTierMultiplayer(cardCreated);
+    this.cardPriceService.applyTierMultiplier(cardCreated);
+
+    return CardModel.entryToModel(cardCreated);
   }
 
   public async updateCard(cardUpdate: CardModel) {
-    const [oldCard] = await this.findWithRelations(cardUpdate);
+    const oldCard = await this.findWithRelations(cardUpdate);
 
-    const cartEntityToUpdate = new CardEntity({
-      description: cardUpdate.description || oldCard.description,
-      likes: cardUpdate.likes || oldCard.likes,
-      name: cardUpdate.name || oldCard.name,
+    await this.cardRepository.update(
+      { id: cardUpdate.id },
+      {
+        description: cardUpdate.description || oldCard.description,
+        likes: cardUpdate.likes || oldCard.likes,
+        name: cardUpdate.name || oldCard.name,
+        price: cardUpdate.price || oldCard.price,
+        tier: cardUpdate.tier.id
+          ? ({ id: cardUpdate.tier.id } as TierEntity)
+          : oldCard.tier,
+      },
+    );
+
+    this.cardPriceService.checkCardTier({
+      ...oldCard,
       price: cardUpdate.price || oldCard.price,
-      thumbnail: oldCard.thumbnail,
-      tier: cardUpdate.tier.id
-        ? ({ id: cardUpdate.tier.id } as TierEntity)
-        : oldCard.tier,
-      id: oldCard.id,
     });
 
-    if (Array.isArray(cardUpdate.thumbnail)) {
-      cartEntityToUpdate.thumbnail = [
-        ...oldCard.thumbnail,
-        ...cardUpdate.thumbnail?.map(
-          (item) => ({ id: item.id } as ThumbsEntity),
-        ),
-      ];
-    }
+    const newCard = await this.findWithRelations(cardUpdate);
 
-    const afterUpdate = await this.cardRepository.save(cartEntityToUpdate);
+    this.cardPriceService.applyTierMultiplier(newCard);
 
-    return this.cardPriceService.applyTierMultiplayer(afterUpdate);
-  }
-
-  private async findWithRelations(
-    cardUpdate: CardModel,
-  ): Promise<CardEntity[]> {
-    return this.cardRepository.find({
-      where: {
-        id: cardUpdate.id,
-      },
-      relations: {
-        tier: true,
-        thumbnail: true,
-      },
-    });
+    return CardModel.entryToModel(newCard);
   }
 
   public async getRandomCard(userId: number) {
@@ -118,29 +138,32 @@ class CardService {
 
     setTimeout(() => this.renewCardStatus(random.id), 5000);
 
-    return this.cardPriceService.applyTierMultiplayer(random);
+    this.cardPriceService.applyTierMultiplier(random);
+
+    return random;
   }
 
-  async renewCardStatus(cardId: number) {
-    const cardItem = await this.cardRepository.findOneOrFail({
-      where: {
-        id: cardId,
-      },
-      relations: {
-        status: true,
-      },
-    });
+  async discardCard(cardId: number, userId: number) {
+    const cardToDiscard = await this.cardRepository
+      .findOneOrFail({
+        where: { id: cardId },
+        relations: { deck: { user: true }, tier: true },
+      })
+      .catch(() => {
+        throw new Error('Card do not belongs to anyone. Cant be discarded.');
+      });
 
-    if (cardItem.status.id !== CARD_STATUS_ENUM.CLAIMED) {
-      await this.cardRepository.update(
-        { id: cardItem.id },
-        {
-          status: {
-            id: CARD_STATUS_ENUM.FREE,
-          },
-        },
-      );
+    if (userId !== cardToDiscard.deck.user.id) {
+      throw new Error('Card must be owned by current user to be dicarted.');
     }
+
+    await Promise.all([
+      this.cardRepository.update({ id: cardId }, { deck: { id: null } }),
+      this.deckService.changeDeckWallet(
+        cardToDiscard.deck.id,
+        this.cardPriceService.doTierMultiplier(cardToDiscard),
+      ),
+    ]);
   }
 }
 

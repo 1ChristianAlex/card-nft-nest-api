@@ -44,10 +44,10 @@ class DeckEntity {
   @Column({ type: 'integer', default: 8 })
   public gambles: number;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamp', nullable: true })
   public nextGamble?: Date;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamp', nullable: true })
   public nextDaily?: Date;
 
   @UpdateDateColumn()
@@ -59,7 +59,7 @@ class DeckEntity {
   @ManyToOne(() => UserEntity, (user) => user.wallet)
   public user: UserEntity;
 
-  @OneToMany(() => CardEntity, (user) => user.wallet)
+  @OneToMany(() => CardEntity, (user) => user.deck)
   public card: CardEntity;
 
   static readonly tableInfo = {

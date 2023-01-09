@@ -24,5 +24,5 @@ export { ormDatabaseContext };
 export default datasource;
 
 // npx typeorm-ts-node-commonjs migration:create ./src/database/migrations/initial-schema
-// npx typeorm-ts-node-commonjs migration:generate ./src/database/migrations/initial-migration --dataSource ./src/database/database
+// npx typeorm-ts-node-commonjs migration:generate ./src/database/migrations/migration --dataSource ./src/database/database
 // npx typeorm-ts-node-commonjs migration:run --dataSource ./src/database/database

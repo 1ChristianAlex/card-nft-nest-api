@@ -5,7 +5,9 @@ import {
   HttpException,
   HttpStatus,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/modules/auth/services/jwt-auth.guard';
 import { CardValueTrade } from 'src/modules/card/services/card.model';
 import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 import UserDecorator from 'src/modules/user/services/user.decorator';
@@ -13,12 +15,13 @@ import { ROLES_ID } from 'src/modules/user/services/user.model';
 import DeckService from '../services/deck.service';
 import TradeService from '../services/trade.service';
 import {
-  CardClaimDto,
+  CardClaimInputDto,
   DeckTradeInputDto,
   DeckTradeItemInputDto,
 } from './deck.dto';
 
 @Controller('deck')
+@UseGuards(JwtAuthGuard)
 class DeckController {
   constructor(
     private tradeService: TradeService,
@@ -31,7 +34,7 @@ class DeckController {
     @UserDecorator() user: UserOutputDto,
   ) {
     const { self, target } = tradeCardInputPack;
-    if (user.role.id === ROLES_ID.ADMIN && self.userId !== user.id) {
+    if (user.role.id !== ROLES_ID.ADMIN && self.userId !== user.id) {
       throw new HttpException(
         'User must be admin to trade card that is not owner.',
         HttpStatus.UNAUTHORIZED,
@@ -65,13 +68,13 @@ class DeckController {
 
   @Post('claim')
   async claimCard(
-    @Body() cardClaim: CardClaimDto,
+    @Body() cardClaim: CardClaimInputDto,
     @UserDecorator() user: UserOutputDto,
   ) {
     try {
       await this.deckService.claimCard(cardClaim.id, user.id);
     } catch (error) {
-      return new HttpException(error.message, HttpStatus.BAD_GATEWAY);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -80,7 +83,7 @@ class DeckController {
     try {
       await this.deckService.invokeDailyReset(user.id);
     } catch (error) {
-      return new HttpException(error.message, HttpStatus.BAD_GATEWAY);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 }
