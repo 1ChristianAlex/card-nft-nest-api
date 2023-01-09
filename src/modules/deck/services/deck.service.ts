@@ -73,7 +73,7 @@ class DeckService {
       wallet: userWallet,
     });
 
-    this.refreshClaimdedTotal(userWallet);
+    await this.refreshClaimdedTotal(userWallet);
   }
 
   public async refreshAllGumbles() {
@@ -104,17 +104,19 @@ class DeckService {
   }
 
   async changeDeckWallet(userId: number, value: number, isIncresing = true) {
-    const userDeck = await this.deckRepository.findOneByOrFail({
-      user: { id: userId },
-    });
-
     if (isIncresing) {
-      userDeck.wallet + value;
+      await this.deckRepository.increment(
+        { user: { id: userId } },
+        'wallet',
+        value,
+      );
     } else {
-      userDeck.wallet - value;
+      await this.deckRepository.decrement(
+        { user: { id: userId } },
+        'wallet',
+        value,
+      );
     }
-
-    await this.deckRepository.update({ user: { id: userId } }, userDeck);
   }
 }
 

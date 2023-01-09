@@ -1,8 +1,8 @@
 import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
 import { CardModel, CardTier, Thumbnail } from '../services/card.model';
 
-class CardInputDto {
-  constructor(body: CardInputDto) {
+class CardSimpleInputDto {
+  constructor(body: CardSimpleInputDto) {
     Object.assign(this, body);
   }
 
@@ -18,7 +18,7 @@ class CardInputDto {
   @IsNumber()
   public price: number;
 
-  static dtoToModel(input: CardInputDto): CardModel {
+  static dtoToModel(input: CardSimpleInputDto): CardModel {
     return new CardModel({
       name: input.name,
       description: input.description,
@@ -29,8 +29,8 @@ class CardInputDto {
   }
 }
 
-class CardUpdateInputDto extends CardInputDto {
-  constructor(body: CardUpdateInputDto) {
+class CardInputDto extends CardSimpleInputDto {
+  constructor(body: CardInputDto) {
     super(body);
     Object.assign(this, body);
   }
@@ -56,7 +56,7 @@ class CardUpdateInputDto extends CardInputDto {
   public tier: number;
   public thumbnail: number[];
 
-  static dtoToModel(input: CardUpdateInputDto): CardModel {
+  static dtoToModel(input: CardInputDto): CardModel {
     return new CardModel({
       name: input.name,
       description: input.description,
@@ -69,14 +69,4 @@ class CardUpdateInputDto extends CardInputDto {
   }
 }
 
-class CardClaimDto {
-  constructor(id: number) {
-    this.id = id;
-  }
-
-  @IsNumber()
-  @IsNotEmpty()
-  public id: number;
-}
-
-export { CardInputDto, CardUpdateInputDto, CardClaimDto };
+export { CardSimpleInputDto, CardInputDto };

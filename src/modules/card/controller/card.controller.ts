@@ -13,7 +13,7 @@ import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 import UserDecorator from 'src/modules/user/services/user.decorator';
 import CardService from '../services/card.service';
 import DeckService from '../../deck/services/deck.service';
-import { CardClaimDto, CardInputDto, CardUpdateInputDto } from './card.dto';
+import { CardSimpleInputDto, CardInputDto } from './card.dto';
 
 @Controller('card')
 @UseGuards(JwtAuthGuard)
@@ -25,12 +25,12 @@ class CardController {
 
   @Post()
   public async registerNewCard(
-    @Body() cardDto: CardInputDto,
+    @Body() cardDto: CardSimpleInputDto,
     @UserDecorator() user: UserOutputDto,
   ) {
     try {
       const newCard = this.cardService.registerNewCard(
-        CardInputDto.dtoToModel(cardDto),
+        CardSimpleInputDto.dtoToModel(cardDto),
         user.id,
       );
 
@@ -41,10 +41,10 @@ class CardController {
   }
 
   @Put()
-  public async updateCard(@Body() cardUpdate: CardUpdateInputDto) {
+  public async updateCard(@Body() cardUpdate: CardInputDto) {
     try {
       const update = this.cardService.updateCard(
-        CardUpdateInputDto.dtoToModel(cardUpdate),
+        CardInputDto.dtoToModel(cardUpdate),
       );
 
       return update;
@@ -59,18 +59,6 @@ class CardController {
       const update = await this.cardService.getRandomCard(user.id);
 
       return update;
-    } catch (error) {
-      return new HttpException(error.message, HttpStatus.BAD_GATEWAY);
-    }
-  }
-
-  @Post('claim')
-  async claimCard(
-    @Body() cardClaim: CardClaimDto,
-    @UserDecorator() user: UserOutputDto,
-  ) {
-    try {
-      await this.walletService.claimCard(cardClaim.id, user.id);
     } catch (error) {
       return new HttpException(error.message, HttpStatus.BAD_GATEWAY);
     }

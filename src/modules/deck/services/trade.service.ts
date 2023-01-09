@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import CardEntity from 'src/modules/card/entities/card.entity';
+import { CardValueTrade } from 'src/modules/card/services/card.model';
 import DeckService from 'src/modules/deck/services/deck.service';
 import { In, Repository } from 'typeorm';
-import CardEntity from '../entities/card.entity';
-import { CardModel, CardValueTrade } from './card.model';
 
 @Injectable()
-class CardTradeService {
+class TradeService {
   constructor(
     @InjectRepository(CardEntity)
     private cardRepository: Repository<CardEntity>,
@@ -15,8 +15,8 @@ class CardTradeService {
 
   async tradeCards(cardOne: CardValueTrade, cardTradeTwo: CardValueTrade) {
     const [cardsDbOne, cardsDbTwo] = await Promise.all([
-      this.getCardByIdWithUser(cardOne.cardList),
-      this.getCardByIdWithUser(cardTradeTwo.cardList),
+      this.getCardByIdWithUser(cardOne.cardListIds),
+      this.getCardByIdWithUser(cardTradeTwo.cardListIds),
     ]);
 
     await Promise.all([
@@ -85,15 +85,22 @@ class CardTradeService {
   }
 
   private async getCardByIdWithUser(
-    cardList: CardModel[],
+    cardListIds: number[],
   ): Promise<CardEntity[]> {
-    if (!cardList.length) {
+    if (!cardListIds.length) {
       return [];
     }
     return this.cardRepository.find({
-      where: { id: In(cardList.map((item) => item.id)) },
+      where: { id: In(cardListIds) },
     });
+  }
+
+  async giveCard(cardGived: CardValueTrade, userIdToGive: number) {
+    await this.cardRepository.update(
+      { id: In(cardGived.cardListIds) },
+      { wallet: { user: { id: userIdToGive } } },
+    );
   }
 }
 
-export default CardTradeService;
+export default TradeService;
