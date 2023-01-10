@@ -115,17 +115,9 @@ class TradeService {
       this.decreaseWalletTrade(walletSelf, walletTarget),
     ]);
 
-    const allCardsId: number[] = [];
+    const allCardsId = [...cardsDbTarget, ...cardsDbSelf].map(({ id }) => id);
 
-    cardsDbSelf.forEach((item) => {
-      allCardsId.push(item.id);
-    });
-
-    cardsDbTarget.forEach((item) => {
-      allCardsId.push(item.id);
-    });
-
-    await this.cardRepository.increment({ id: In(allCardsId) }, 'wallet', 25);
+    await this.cardRepository.increment({ id: In(allCardsId) }, 'price', 25);
   }
 
   private async registerRequestTransaction(
@@ -137,8 +129,8 @@ class TradeService {
       selfUserId,
       new CardValueTrade(
         cardTradeSelf.deckId,
-        cardTradeTarget.cardListIds,
-        cardTradeTarget.value,
+        cardTradeSelf.cardListIds,
+        cardTradeSelf.value,
       ),
       TransactionType.TRADE,
       TransactionStatus.REQUEST,
@@ -149,8 +141,8 @@ class TradeService {
       selfUserId,
       new CardValueTrade(
         cardTradeTarget.deckId,
-        cardTradeSelf.cardListIds,
-        cardTradeSelf.value,
+        cardTradeTarget.cardListIds,
+        cardTradeTarget.value,
       ),
       TransactionType.TRADE,
       TransactionStatus.REQUEST,

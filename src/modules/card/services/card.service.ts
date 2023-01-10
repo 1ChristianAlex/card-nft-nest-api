@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import DeckService from 'src/modules/deck/services/deck.service';
-import { Repository } from 'typeorm';
+import { Equal, Not, Repository, MoreThanOrEqual } from 'typeorm';
 import CardEntity from '../entities/card.entity';
 import { CARD_STATUS_ENUM } from '../entities/cardStatus.entity';
 import TierEntity from '../entities/tier.entity';
@@ -31,26 +31,27 @@ class CardService {
     });
   }
 
-  private async renewCardStatus(cardId: number) {
-    const cardItem = await this.cardRepository.findOneOrFail({
-      where: {
-        id: cardId,
-      },
-      relations: {
-        status: true,
-      },
-    });
+  private readonly claimTime = 5;
 
-    if (cardItem.status.id !== CARD_STATUS_ENUM.CLAIMED) {
-      await this.cardRepository.update(
-        { id: cardItem.id },
-        {
-          status: {
-            id: CARD_STATUS_ENUM.FREE,
-          },
+  private async renewCardStatus(cardId: number) {
+    const currentTime = new Date();
+
+    currentTime.setSeconds(currentTime.getSeconds() + this.claimTime);
+
+    await this.cardRepository.update(
+      {
+        id: cardId,
+        updatedAt: MoreThanOrEqual(currentTime),
+        status: {
+          id: Not(Equal(CARD_STATUS_ENUM.CLAIMED)),
         },
-      );
-    }
+      },
+      {
+        status: {
+          id: CARD_STATUS_ENUM.FREE,
+        },
+      },
+    );
   }
 
   public async registerNewCard(cardToCreate: CardModel, userId: number) {
@@ -114,7 +115,7 @@ class CardService {
       // .innerJoinAndSelect(TierEntity, 'tier', 'card.tierId = tier.id')
       // .innerJoinAndSelect(ThumbsEntity, 'thumb', 'card.id = thumb.cardId')
       .where(`card.statusId = ${CARD_STATUS_ENUM.FREE}`)
-      .andWhere('card.walletId is NULL')
+      .andWhere('card.deckId is NULL')
       .orderBy('RANDOM()')
       .getOneOrFail();
 
@@ -136,7 +137,7 @@ class CardService {
       ),
     ]);
 
-    setTimeout(() => this.renewCardStatus(random.id), 5000);
+    setTimeout(() => this.renewCardStatus(random.id), this.claimTime * 1000);
 
     this.cardPriceService.applyTierMultiplier(random);
 
@@ -158,10 +159,14 @@ class CardService {
     }
 
     await Promise.all([
-      this.cardRepository.update({ id: cardId }, { deck: { id: null } }),
+      this.cardRepository.update(
+        { id: cardId },
+        { deck: { id: null }, status: { id: CARD_STATUS_ENUM.FREE } },
+      ),
       this.deckService.changeDeckWallet(
         cardToDiscard.deck.id,
         this.cardPriceService.doTierMultiplier(cardToDiscard),
+        true,
       ),
     ]);
   }

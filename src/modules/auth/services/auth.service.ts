@@ -10,17 +10,17 @@ class AuthService {
   ) {}
 
   async doUserLogin(email: string, password: string) {
-    try {
-      const user = await this._userService.getUserByEmail(email);
+    const user = await this._userService.getUserByEmail(email);
 
-      if (!(await this._passwordHash.compareHash(user.password, password))) {
-        throw new Error();
-      }
+    if (!user.isActive) {
+      throw new Error('User is no longer active');
+    }
 
-      return user;
-    } catch (error) {
+    if (!(await this._passwordHash.compareHash(user.password, password))) {
       throw new Error('Wrong email/password');
     }
+
+    return user;
   }
 }
 

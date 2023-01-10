@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   Post,
@@ -11,7 +12,9 @@ import { CardValueTrade } from 'src/modules/card/services/card.model';
 import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 import UserDecorator from 'src/modules/user/services/user.decorator';
 import { ROLES_ID } from 'src/modules/user/services/user.model';
+import DeckService from '../services/deck.service';
 import TradeService from '../services/trade.service';
+import TransactionService from '../services/transaction.service';
 import {
   AcceptTradeTransactionInputDto,
   DeckTradeInputDto,
@@ -21,7 +24,11 @@ import {
 @Controller('trade')
 @UseGuards(JwtAuthGuard)
 class TradeController {
-  constructor(private tradeService: TradeService) {}
+  constructor(
+    private tradeService: TradeService,
+    public transactionService: TransactionService,
+    public deckService: DeckService,
+  ) {}
 
   @Post('request')
   async tradeCards(
@@ -82,13 +89,35 @@ class TradeController {
     @UserDecorator() user: UserOutputDto,
   ) {
     try {
+      const selfDeck = await this.deckService.getUserDeck(user.id);
       await this.tradeService.giveCard(
-        new CardValueTrade(user.id, toGive.cardIds, toGive.value),
+        new CardValueTrade(selfDeck.id, toGive.cardIds, toGive.value),
         toGive.deckId,
       );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
+  }
+
+  @Get('/pedingRequest')
+  async getPedingRequest(@UserDecorator() user: UserOutputDto) {
+    return this.getPendingTransactions(user, true);
+  }
+
+  private async getPendingTransactions(user: UserOutputDto, isOwner: boolean) {
+    try {
+      return this.transactionService.getUserDeckPendingAccepts(
+        user.id,
+        isOwner,
+      );
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get('/pedingAccepts')
+  async getPedingAccepts(@UserDecorator() user: UserOutputDto) {
+    return this.getPendingTransactions(user, false);
   }
 }
 

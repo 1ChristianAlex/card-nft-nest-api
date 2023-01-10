@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CardValueTrade } from 'src/modules/card/services/card.model';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 import TransactionEntity, {
   TransactionStatus,
   TransactionType,
 } from '../entities/transactions.entity';
+import { TransactionModel } from './transaction.model';
 
 @Injectable()
 class TransactionService {
@@ -40,7 +41,7 @@ class TransactionService {
   ): Promise<void> {
     const self = await this.transactionRepository
       .findOneOrFail({
-        where: { id },
+        where: { id, status: TransactionStatus.REQUEST },
         relations: {
           transaction: true,
         },
@@ -82,10 +83,27 @@ class TransactionService {
     const targetCardValueTrade = new CardValueTrade(
       target.deck.id,
       target.cards.map(({ id }) => id),
-      self.wallet ?? 0,
+      target.wallet ?? 0,
     );
 
     return [selfCardValueTrade, targetCardValueTrade];
+  }
+
+  public async getUserDeckPendingAccepts(
+    userId: number,
+    isOwner: boolean,
+  ): Promise<TransactionModel[]> {
+    const pending = await this.transactionRepository.find({
+      where: {
+        status: TransactionStatus.REQUEST,
+        type: TransactionType.TRADE,
+        deck: { user: { id: userId } },
+        transaction: { id: isOwner ? IsNull() : Not(IsNull()) },
+      },
+      relations: { deck: true, transaction: true },
+    });
+
+    return pending.map(TransactionModel.fromEntity);
   }
 }
 

@@ -30,7 +30,7 @@ class CardStatusEntity {
   public name: string;
 
   @UpdateDateColumn()
-  public updatedDate?: Date;
+  public updatedAt?: Date;
 
   @CreateDateColumn()
   public createAt?: Date;

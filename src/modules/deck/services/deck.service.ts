@@ -26,7 +26,7 @@ class DeckService {
     await this.deckRepository.decrement({ user: { id: userId } }, 'gambles', 1);
   }
 
-  async getUserWaller(userId: number) {
+  async getUserDeck(userId: number) {
     const userDeck = await this.deckRepository.findOneOrFail({
       where: { user: { id: userId } },
       relations: {
@@ -49,19 +49,14 @@ class DeckService {
   }
 
   async refreshClaimdedTotal(userDeck: DeckEntity) {
-    const cardsTotal = await this.cardRepository
-      .createQueryBuilder('card')
-      .where(`card.walletId = ${userDeck.id}`)
-      .getCount();
-
-    await this.deckRepository.update(
-      { id: userDeck.id },
-      { deckAmount: cardsTotal, claims: userDeck.claims - 1 },
-    );
+    await Promise.all([
+      this.deckRepository.increment({ id: userDeck.id }, 'deckAmount', 1),
+      this.deckRepository.decrement({ id: userDeck.id }, 'claims', 1),
+    ]);
   }
 
   public async claimCard(cardId: number, userId: number) {
-    const userWallet = await this.getUserWaller(userId);
+    const userWallet = await this.getUserDeck(userId);
 
     if (!userWallet.claims) {
       throw new Error('User can not claim right now');
@@ -115,7 +110,7 @@ class DeckService {
       user: { id: userId },
     });
 
-    if (Date.now() < userDeck.nextDaily.getTime()) {
+    if (userDeck.nextDaily && Date.now() < userDeck.nextDaily.getTime()) {
       throw new Error('Daily canot be invoked');
     }
 
@@ -128,7 +123,6 @@ class DeckService {
       {
         gambles: 8,
         nextDaily,
-        nextGamble: this.getNextGamble(),
       },
     );
   }

@@ -50,7 +50,7 @@ class CardEntity {
   public likes: number;
 
   @UpdateDateColumn()
-  public updatedDate?: Date;
+  public updatedAt?: Date;
 
   @CreateDateColumn()
   public createAt?: Date;
