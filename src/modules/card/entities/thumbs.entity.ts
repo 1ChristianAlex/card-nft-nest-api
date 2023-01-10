@@ -8,11 +8,21 @@ import {
 } from 'typeorm';
 import CardEntity from './card.entity';
 
+interface IThumbsEntityConstructor {
+  description: string;
+  path: string;
+  card: Partial<CardEntity>;
+}
+
 @Entity({
   schema: ThumbsEntity.tableInfo.schema,
   name: ThumbsEntity.tableInfo.name,
 })
 class ThumbsEntity {
+  constructor(entity: IThumbsEntityConstructor) {
+    Object.assign(this, entity);
+  }
+
   @PrimaryGeneratedColumn()
   public id: number;
 

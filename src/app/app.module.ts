@@ -15,6 +15,7 @@ import CardStatusEntity from 'src/modules/card/entities/cardStatus.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import DeckModule from 'src/modules/deck/deck.module';
 import TransactionEntity from 'src/modules/deck/entities/transactions.entity';
+import CommonLib from 'src/lib/lib.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import TransactionEntity from 'src/modules/deck/entities/transactions.entity';
       synchronize: true,
       logging: true,
     }),
+    CommonLib,
     UserModule,
     AuthModule,
     CardModule,
