@@ -14,6 +14,7 @@ import CardModule from 'src/modules/card/card.module';
 import CardStatusEntity from 'src/modules/card/entities/cardStatus.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import DeckModule from 'src/modules/deck/deck.module';
+import TransactionEntity from 'src/modules/deck/entities/transactions.entity';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import DeckModule from 'src/modules/deck/deck.module';
         ThumbsEntity,
         DeckEntity,
         CardStatusEntity,
+        TransactionEntity,
       ],
       synchronize: true,
       logging: true,

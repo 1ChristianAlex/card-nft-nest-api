@@ -9,6 +9,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import UserEntity from '../../user/entities/user.entity';
+import TransactionEntity from './transactions.entity';
 
 interface IDeckEntityConstructor {
   id: number;
@@ -61,6 +62,9 @@ class DeckEntity {
 
   @OneToMany(() => CardEntity, (user) => user.deck)
   public card: CardEntity;
+
+  @OneToMany(() => TransactionEntity, (transaction) => transaction.deck)
+  public transaction: CardEntity;
 
   static readonly tableInfo = {
     name: 'deck',

@@ -8,64 +8,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/modules/auth/services/jwt-auth.guard';
-import { CardValueTrade } from 'src/modules/card/services/card.model';
 import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 import UserDecorator from 'src/modules/user/services/user.decorator';
-import { ROLES_ID } from 'src/modules/user/services/user.model';
 import DeckService from '../services/deck.service';
-import TradeService from '../services/trade.service';
-import {
-  CardClaimInputDto,
-  DeckTradeInputDto,
-  DeckTradeItemInputDto,
-} from './deck.dto';
+import { CardClaimInputDto } from './deck.dto';
 
 @Controller('deck')
 @UseGuards(JwtAuthGuard)
 class DeckController {
-  constructor(
-    private tradeService: TradeService,
-    private deckService: DeckService,
-  ) {}
-
-  @Post('trade')
-  async tradeCards(
-    @Body() tradeCardInputPack: DeckTradeInputDto,
-    @UserDecorator() user: UserOutputDto,
-  ) {
-    const { self, target } = tradeCardInputPack;
-
-    if (user.role.id !== ROLES_ID.ADMIN && self.deckId !== user.id) {
-      throw new HttpException(
-        'User must be admin to trade card that is not owner.',
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
-    try {
-      await this.tradeService.tradeCards(
-        new CardValueTrade(self.deckId, self.cardIds, self.value),
-        new CardValueTrade(target.deckId, target.cardIds, target.value),
-      );
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  @Post('give')
-  async give(
-    @Body() toGive: DeckTradeItemInputDto,
-    @UserDecorator() user: UserOutputDto,
-  ) {
-    try {
-      await this.tradeService.giveCard(
-        new CardValueTrade(user.id, toGive.cardIds, toGive.value),
-        toGive.deckId,
-      );
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
+  constructor(private deckService: DeckService) {}
 
   @Post('claim')
   async claimCard(

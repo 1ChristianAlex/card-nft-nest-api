@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import RolesEntity from './roles.entity';
 import DeckEntity from '../../deck/entities/deck.entity';
+import TransactionEntity from '../../deck/entities/transactions.entity';
 
 interface IUserEntityConstructor {
   name: string;
@@ -63,6 +64,9 @@ class UserEntity {
 
   @OneToMany(() => DeckEntity, (wallet) => wallet.user)
   public wallet: DeckEntity;
+
+  @OneToMany(() => TransactionEntity, (transaction) => transaction.user)
+  public transaction: TransactionEntity;
 
   static readonly tableInfo = {
     name: 'user',

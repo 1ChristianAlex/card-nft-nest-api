@@ -25,4 +25,15 @@ class CardClaimInputDto {
   public id: number;
 }
 
-export { DeckTradeInputDto, DeckTradeItemInputDto, CardClaimInputDto };
+class AcceptTradeTransactionInputDto {
+  @IsNumber()
+  @IsNotEmpty()
+  public id: number;
+}
+
+export {
+  DeckTradeInputDto,
+  DeckTradeItemInputDto,
+  CardClaimInputDto,
+  AcceptTradeTransactionInputDto,
+};

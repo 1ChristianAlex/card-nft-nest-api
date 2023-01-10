@@ -67,7 +67,7 @@ class CardEntity {
   @ManyToOne(() => UserEntity, (user) => user.card)
   public user: UserEntity;
 
-  @ManyToOne(() => DeckEntity, (user) => user.card)
+  @ManyToOne(() => DeckEntity, (deck) => deck.card)
   public deck: DeckEntity;
 
   static readonly tableInfo = {

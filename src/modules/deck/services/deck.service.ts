@@ -27,14 +27,25 @@ class DeckService {
   }
 
   async getUserWaller(userId: number) {
-    const userWallet = await this.deckRepository.findOneOrFail({
+    const userDeck = await this.deckRepository.findOneOrFail({
       where: { user: { id: userId } },
       relations: {
         user: true,
       },
     });
 
-    return userWallet;
+    return userDeck;
+  }
+
+  async getDeckById(id: number) {
+    const deck = await this.deckRepository.findOneOrFail({
+      where: { id },
+      relations: {
+        user: true,
+      },
+    });
+
+    return deck;
   }
 
   async refreshClaimdedTotal(userDeck: DeckEntity) {
