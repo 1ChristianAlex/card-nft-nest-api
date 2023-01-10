@@ -83,7 +83,7 @@ class CardModel {
 
 class CardValueTrade {
   constructor(
-    public userId: number,
+    public deckId: number,
     public cardListIds: number[],
     public value = 0,
   ) {}

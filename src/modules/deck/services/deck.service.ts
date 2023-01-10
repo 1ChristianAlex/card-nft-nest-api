@@ -122,11 +122,25 @@ class DeckService {
     );
   }
 
-  async changeDeckWallet(walletId: number, value: number, isIncresing = true) {
+  async changeDeckWallet(deckId: number, value: number, isIncresing = true) {
     if (isIncresing) {
-      await this.deckRepository.increment({ id: walletId }, 'wallet', value);
+      await this.deckRepository.increment({ id: deckId }, 'wallet', value);
     } else {
-      await this.deckRepository.decrement({ id: walletId }, 'wallet', value);
+      const currentDeck = await this.deckRepository.findOne({
+        where: { id: deckId },
+      });
+
+      let valueToDecrement = value;
+
+      if (currentDeck.wallet < value) {
+        valueToDecrement = value + value * 0.25;
+      }
+
+      await this.deckRepository.decrement(
+        { id: deckId },
+        'wallet',
+        valueToDecrement,
+      );
     }
   }
 

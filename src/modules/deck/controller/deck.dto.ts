@@ -1,8 +1,8 @@
-import { IsNumber, IsArray, IsNotEmpty } from 'class-validator';
+import { IsNumber, IsArray, IsNotEmpty, IsObject } from 'class-validator';
 
 class DeckTradeItemInputDto {
   @IsNumber()
-  public userId: number;
+  public deckId: number;
 
   @IsArray()
   public cardIds: number[];
@@ -12,7 +12,10 @@ class DeckTradeItemInputDto {
 }
 
 class DeckTradeInputDto {
+  @IsObject()
   self: DeckTradeItemInputDto;
+
+  @IsObject()
   target: DeckTradeItemInputDto;
 }
 

@@ -28,16 +28,13 @@ class TradeService {
     ]);
 
     await Promise.all([
-      this.updateCardListWithNewUser(cardsDbOne, cardTradeTwo.userId),
-      this.updateCardListWithNewUser(cardsDbTwo, cardOne.userId),
+      this.updateCardListWithNewUser(cardsDbOne, cardTradeTwo.deckId),
+      this.updateCardListWithNewUser(cardsDbTwo, cardOne.deckId),
     ]);
 
-    const walletOne = new IncreaseWalletParams(
-      cardsDbOne.at(0).deck.id,
-      cardOne.value,
-    );
+    const walletOne = new IncreaseWalletParams(cardOne.deckId, cardOne.value);
     const walletTwo = new IncreaseWalletParams(
-      cardsDbTwo.at(0).deck.id,
+      cardTradeTwo.deckId,
       cardTradeTwo.value,
     );
 
@@ -83,12 +80,12 @@ class TradeService {
   ) {
     return Promise.all([
       this.deckService.changeDeckWallet(
-        cardOne.walletValue,
+        cardOne.deckId,
         cardTradeTwo.walletValue,
         true,
       ),
       this.deckService.changeDeckWallet(
-        cardTradeTwo.walletValue,
+        cardTradeTwo.deckId,
         cardOne.walletValue,
         true,
       ),
@@ -97,12 +94,14 @@ class TradeService {
 
   private async updateCardListWithNewUser(
     cardsDbOne: CardEntity[],
-    newUserId: number,
+    newDeckId: number,
   ) {
-    await this.cardRepository.update(
-      { id: In(cardsDbOne.map((item) => item.id)) },
-      { user: { id: newUserId } },
-    );
+    if (!!cardsDbOne?.length) {
+      await this.cardRepository.update(
+        { id: In(cardsDbOne.map((item) => item.id)) },
+        { deck: { id: newDeckId } },
+      );
+    }
   }
 
   private async getCardByIdWithUser(

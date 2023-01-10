@@ -34,7 +34,8 @@ class DeckController {
     @UserDecorator() user: UserOutputDto,
   ) {
     const { self, target } = tradeCardInputPack;
-    if (user.role.id !== ROLES_ID.ADMIN && self.userId !== user.id) {
+
+    if (user.role.id !== ROLES_ID.ADMIN && self.deckId !== user.id) {
       throw new HttpException(
         'User must be admin to trade card that is not owner.',
         HttpStatus.UNAUTHORIZED,
@@ -43,8 +44,8 @@ class DeckController {
 
     try {
       await this.tradeService.tradeCards(
-        new CardValueTrade(self.userId, self.cardIds, self.value),
-        new CardValueTrade(target.userId, target.cardIds, target.value),
+        new CardValueTrade(self.deckId, self.cardIds, self.value),
+        new CardValueTrade(target.deckId, target.cardIds, target.value),
       );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -59,7 +60,7 @@ class DeckController {
     try {
       await this.tradeService.giveCard(
         new CardValueTrade(user.id, toGive.cardIds, toGive.value),
-        toGive.userId,
+        toGive.deckId,
       );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
