@@ -18,7 +18,7 @@ class CardTier {
   public description: string;
   public value: number;
 
-  static entryToModel(entity: TierEntity): CardTier {
+  static fromEntity(entity: TierEntity): CardTier {
     return new CardTier({
       id: entity.id,
       name: entity.name,
@@ -39,11 +39,14 @@ class Thumbnail {
 
   public path: string;
 
-  static entryToModel(entity: ThumbsEntity): Thumbnail {
+  public position: number;
+
+  static fromEntity(entity: ThumbsEntity): Thumbnail {
     return new Thumbnail({
       id: entity.id,
       description: entity.description,
       path: entity.path,
+      position: entity.position,
     });
   }
 }
@@ -66,16 +69,16 @@ class CardModel {
 
   public thumbnail?: Thumbnail[];
 
-  static entryToModel(entity: CardEntity): CardModel {
+  static fromEntity(entity: CardEntity): CardModel {
     return new CardModel({
       id: entity.id,
       name: entity.name,
       description: entity.description,
       price: entity.price,
       likes: entity.likes,
-      tier: entity.tier ? CardTier.entryToModel(entity.tier) : null,
-      thumbnail: entity.thumbnail
-        ? entity.thumbnail.map(Thumbnail.entryToModel)
+      tier: entity.tier ? CardTier.fromEntity(entity.tier) : null,
+      thumbnail: entity.thumbnail?.length
+        ? entity.thumbnail.map(Thumbnail.fromEntity)
         : null,
     });
   }

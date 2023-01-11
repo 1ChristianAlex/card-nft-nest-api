@@ -14,6 +14,7 @@ import {
 import { JwtAuthGuard } from 'src/modules/auth/services/jwt-auth.guard';
 import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 import UserDecorator from 'src/modules/user/services/user.decorator';
+import { CardModel } from '../services/card.model';
 import CardService from '../services/card.service';
 import { CardSimpleInputDto, CardInputDto } from './card.dto';
 
@@ -28,36 +29,32 @@ class CardController {
     @UserDecorator() user: UserOutputDto,
   ) {
     try {
-      const newCard = this.cardService.registerNewCard(
+      return this.cardService.registerNewCard(
         CardSimpleInputDto.dtoToModel(cardDto),
         user.id,
       );
-
-      return newCard;
     } catch (error) {
       return new HttpException(error.message, HttpStatus.BAD_GATEWAY);
     }
   }
 
   @Put()
-  public async updateCard(@Body() cardUpdate: CardInputDto) {
+  public async updateCard(
+    @Body() cardUpdate: CardInputDto,
+  ): Promise<CardModel> {
     try {
-      const update = this.cardService.updateCard(
-        CardInputDto.dtoToModel(cardUpdate),
-      );
-
-      return update;
+      return this.cardService.updateCard(CardInputDto.dtoToModel(cardUpdate));
     } catch (error) {
-      return new HttpException(error.message, HttpStatus.BAD_GATEWAY);
+      throw new HttpException(error.message, HttpStatus.BAD_GATEWAY);
     }
   }
 
   @Get('gamble')
-  async getRandomCard(@UserDecorator() user: UserOutputDto) {
+  async getRandomCard(
+    @UserDecorator() user: UserOutputDto,
+  ): Promise<CardModel> {
     try {
-      const update = await this.cardService.getRandomCard(user.id);
-
-      return update;
+      return this.cardService.getRandomCard(user.id);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -70,6 +67,17 @@ class CardController {
   ) {
     try {
       await this.cardService.discardCard(cardId, user.id);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get('list/:deckId')
+  async getCardList(
+    @Param('deckId', ParseIntPipe) deckId: number,
+  ): Promise<CardModel[]> {
+    try {
+      return this.cardService.listDeckCards(deckId);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

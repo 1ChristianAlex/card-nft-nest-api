@@ -28,10 +28,11 @@ class CardService {
         tier: true,
         thumbnail: true,
       },
+      order: { thumbnail: { position: 'ASC' } },
     });
   }
 
-  private readonly claimTime = 5;
+  private readonly claimTime = 10;
 
   private async renewCardStatus(cardId: number) {
     const currentTime = new Date();
@@ -54,7 +55,10 @@ class CardService {
     );
   }
 
-  public async registerNewCard(cardToCreate: CardModel, userId: number) {
+  public async registerNewCard(
+    cardToCreate: CardModel,
+    userId: number,
+  ): Promise<CardModel> {
     const [lowestTier] = await this.tierRepository.find({
       order: { value: 'ASC' },
       take: 1,
@@ -75,10 +79,10 @@ class CardService {
 
     this.cardPriceService.applyTierMultiplier(cardCreated);
 
-    return CardModel.entryToModel(cardCreated);
+    return CardModel.fromEntity(cardCreated);
   }
 
-  public async updateCard(cardUpdate: CardModel) {
+  public async updateCard(cardUpdate: CardModel): Promise<CardModel> {
     const oldCard = await this.findWithRelations(cardUpdate);
 
     await this.cardRepository.update(
@@ -103,10 +107,10 @@ class CardService {
 
     this.cardPriceService.applyTierMultiplier(newCard);
 
-    return CardModel.entryToModel(newCard);
+    return CardModel.fromEntity(newCard);
   }
 
-  public async getRandomCard(userId: number) {
+  public async getRandomCard(userId: number): Promise<CardModel> {
     await this.deckService.decreaseGambles(userId);
 
     const randomId = await this.cardRepository
@@ -129,6 +133,7 @@ class CardService {
           thumbnail: true,
           status: true,
         },
+        order: { thumbnail: { position: 'ASC' } },
       }),
 
       this.cardRepository.update(
@@ -141,7 +146,7 @@ class CardService {
 
     this.cardPriceService.applyTierMultiplier(random);
 
-    return random;
+    return CardModel.fromEntity(random);
   }
 
   async discardCard(cardId: number, userId: number) {
@@ -169,6 +174,19 @@ class CardService {
         true,
       ),
     ]);
+  }
+  async listDeckCards(deckId: number): Promise<CardModel[]> {
+    const list = await this.cardRepository.find({
+      where: { deck: { id: deckId } },
+      relations: {
+        tier: true,
+        thumbnail: true,
+        status: true,
+      },
+      order: { thumbnail: { position: 'ASC' } },
+    });
+
+    return list.map(CardModel.fromEntity);
   }
 }
 

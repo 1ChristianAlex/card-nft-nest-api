@@ -12,6 +12,7 @@ interface IThumbsEntityConstructor {
   description: string;
   path: string;
   card: Partial<CardEntity>;
+  position: number;
 }
 
 @Entity({
@@ -31,6 +32,9 @@ class ThumbsEntity {
 
   @Column({ type: 'text' })
   public path: string;
+
+  @Column({ type: 'integer', default: 1 })
+  public position: number;
 
   @ManyToOne(() => CardEntity, (card) => card.thumbnail)
   public card: CardEntity;

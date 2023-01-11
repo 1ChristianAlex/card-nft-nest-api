@@ -7,13 +7,14 @@ import {
   MaxFileSizeValidator,
   ParseFilePipe,
   Post,
+  Put,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import AwsS3Service from 'src/lib/aws-s3/aws-s3.service';
 import ThumbnailService from '../services/thumbnail.service';
-import { ThumbnailInputDto } from './thumbnail.dto';
+import { ThumbnailInputDto, ThumbnailPositionInputDto } from './thumbnail.dto';
 
 @Controller('card/thumbnail')
 class ThumbnailController {
@@ -41,11 +42,22 @@ class ThumbnailController {
         file.mimetype,
       );
 
-      this.thumbService.registerImage(
+      await this.thumbService.registerImage(
         filePath,
         parseInt(body.cardId),
         body.description,
       );
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Put('position')
+  async changeThumbsPostion(
+    @Body() body: ThumbnailPositionInputDto,
+  ): Promise<void> {
+    try {
+      await this.thumbService.changePosition(body.thumbId, body.position);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

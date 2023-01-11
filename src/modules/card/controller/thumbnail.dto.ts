@@ -11,4 +11,14 @@ class ThumbnailInputDto {
   public cardId: string;
 }
 
-export { ThumbnailInputDto };
+class ThumbnailPositionInputDto {
+  @IsNotEmpty()
+  @IsNumber()
+  public thumbId: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  public position: number;
+}
+
+export { ThumbnailInputDto, ThumbnailPositionInputDto };

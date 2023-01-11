@@ -14,6 +14,7 @@ import UserDecorator from 'src/modules/user/services/user.decorator';
 import { ROLES_ID } from 'src/modules/user/services/user.model';
 import DeckService from '../services/deck.service';
 import TradeService from '../services/trade.service';
+import { TransactionModel } from '../services/transaction.model';
 import TransactionService from '../services/transaction.service';
 import {
   AcceptTradeTransactionInputDto,
@@ -34,7 +35,7 @@ class TradeController {
   async tradeCards(
     @Body() tradeCardInputPack: DeckTradeInputDto,
     @UserDecorator() user: UserOutputDto,
-  ) {
+  ): Promise<void> {
     const { self, target } = tradeCardInputPack;
 
     if (user.role.id !== ROLES_ID.ADMIN && self.deckId !== user.id) {
@@ -57,21 +58,21 @@ class TradeController {
   @Post('accept')
   async acceptTrade(
     @Body() acceptTradeTransaction: AcceptTradeTransactionInputDto,
-  ) {
+  ): Promise<void> {
     return this.tradeAction(acceptTradeTransaction, true);
   }
 
   @Post('decline')
   async declineTrade(
     @Body() acceptTradeTransaction: AcceptTradeTransactionInputDto,
-  ) {
+  ): Promise<void> {
     return this.tradeAction(acceptTradeTransaction, false);
   }
 
   private async tradeAction(
     acceptTradeTransaction: AcceptTradeTransactionInputDto,
     accept: boolean,
-  ) {
+  ): Promise<void> {
     try {
       if (accept) {
         await this.tradeService.doTrade(acceptTradeTransaction.id);
@@ -87,7 +88,7 @@ class TradeController {
   async give(
     @Body() toGive: DeckTradeItemInputDto,
     @UserDecorator() user: UserOutputDto,
-  ) {
+  ): Promise<void> {
     try {
       const selfDeck = await this.deckService.getUserDeck(user.id);
       await this.tradeService.giveCard(
@@ -100,11 +101,16 @@ class TradeController {
   }
 
   @Get('/pedingRequest')
-  async getPedingRequest(@UserDecorator() user: UserOutputDto) {
+  async getPedingRequest(
+    @UserDecorator() user: UserOutputDto,
+  ): Promise<TransactionModel[]> {
     return this.getPendingTransactions(user, true);
   }
 
-  private async getPendingTransactions(user: UserOutputDto, isOwner: boolean) {
+  private async getPendingTransactions(
+    user: UserOutputDto,
+    isOwner: boolean,
+  ): Promise<TransactionModel[]> {
     try {
       return this.transactionService.getUserDeckPendingAccepts(
         user.id,
@@ -116,7 +122,9 @@ class TradeController {
   }
 
   @Get('/pedingAccepts')
-  async getPedingAccepts(@UserDecorator() user: UserOutputDto) {
+  async getPedingAccepts(
+    @UserDecorator() user: UserOutputDto,
+  ): Promise<TransactionModel[]> {
     return this.getPendingTransactions(user, false);
   }
 }
