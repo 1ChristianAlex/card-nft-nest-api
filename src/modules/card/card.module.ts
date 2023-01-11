@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import SaveFileService from 'src/lib/file/saveFile.service';
+import AwsS3Service from 'src/lib/aws-s3/aws-s3.service';
 import DeckEntity from '../deck/entities/deck.entity';
 import DeckService from '../deck/services/deck.service';
 import CardController from './controller/card.controller';
@@ -18,8 +18,8 @@ import ThumbnailService from './services/thumbnail.service';
     CardService,
     CardPriceService,
     DeckService,
-    SaveFileService,
     ThumbnailService,
+    AwsS3Service,
   ],
   imports: [
     TypeOrmModule.forFeature([

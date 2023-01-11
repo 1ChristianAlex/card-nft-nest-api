@@ -16,7 +16,7 @@
     - [x] Claim timer
     - [x] Card tier update
     - [x] Register card images
-        - [] Image repo
+        - [x] Image repo
     - [] Change default image
 
 ## Deck
@@ -24,10 +24,10 @@
     - [x] Gambles reset
     - [x] Gambles daily
     - [x] Trade card
+    - [x] Transaction Register
     - [x] Discard card
     - [x] Give card
     - [] Card Markeplace
-        [] Transaction Register
     - [] Decresease trade bonus per trade day
     - [] Wishlist
     - [] Order by
