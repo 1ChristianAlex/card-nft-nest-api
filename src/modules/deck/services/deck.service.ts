@@ -4,6 +4,7 @@ import { Repository, Not, IsNull } from 'typeorm';
 import CardEntity from '../../card/entities/card.entity';
 import { CARD_STATUS_ENUM } from '../../card/entities/cardStatus.entity';
 import DeckEntity from '../entities/deck.entity';
+import { DeckModel } from './deck.model';
 
 @Injectable()
 class DeckService {
@@ -48,7 +49,7 @@ class DeckService {
     return deck;
   }
 
-  async refreshClaimdedTotal(userDeck: DeckEntity) {
+  async refreshClaimdedTotal(userDeck: DeckModel) {
     await Promise.all([
       this.deckRepository.increment({ id: userDeck.id }, 'deckAmount', 1),
       this.deckRepository.decrement({ id: userDeck.id }, 'claims', 1),

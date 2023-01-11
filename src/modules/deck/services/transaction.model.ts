@@ -3,6 +3,7 @@ import TransactionEntity, {
   TransactionType,
   TransactionStatus,
 } from '../entities/transactions.entity';
+import { DeckModel } from './deck.model';
 
 class TransactionModel {
   constructor(model: TransactionModel) {
@@ -16,6 +17,7 @@ class TransactionModel {
   public transactedAt: Date;
   public transaction?: TransactionModel;
   public cards?: CardModel[];
+  public deck: DeckModel;
 
   static fromEntity(entity: TransactionEntity): TransactionModel {
     return new TransactionModel({
@@ -28,6 +30,7 @@ class TransactionModel {
         : null,
       cards: entity.cards,
       id: entity.id,
+      deck: entity.deck ? DeckModel.fromEntity(entity.deck) : null,
     });
   }
 }

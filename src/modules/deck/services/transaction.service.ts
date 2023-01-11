@@ -100,7 +100,7 @@ class TransactionService {
         deck: { user: { id: userId } },
         transaction: { id: isOwner ? IsNull() : Not(IsNull()) },
       },
-      relations: { deck: true, transaction: true },
+      relations: { deck: true, transaction: { deck: true } },
     });
 
     return pending.map(TransactionModel.fromEntity);

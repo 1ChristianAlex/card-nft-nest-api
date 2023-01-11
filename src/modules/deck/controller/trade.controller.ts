@@ -11,7 +11,6 @@ import { JwtAuthGuard } from 'src/modules/auth/services/jwt-auth.guard';
 import { CardValueTrade } from 'src/modules/card/services/card.model';
 import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 import UserDecorator from 'src/modules/user/services/user.decorator';
-import { ROLES_ID } from 'src/modules/user/services/user.model';
 import DeckService from '../services/deck.service';
 import TradeService from '../services/trade.service';
 import { TransactionModel } from '../services/transaction.model';
@@ -34,16 +33,8 @@ class TradeController {
   @Post('request')
   async tradeCards(
     @Body() tradeCardInputPack: DeckTradeInputDto,
-    @UserDecorator() user: UserOutputDto,
   ): Promise<void> {
     const { self, target } = tradeCardInputPack;
-
-    if (user.role.id !== ROLES_ID.ADMIN && self.deckId !== user.id) {
-      throw new HttpException(
-        'User must be admin to trade card that is not owner.',
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
 
     try {
       await this.tradeService.requestTrade(
