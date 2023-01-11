@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsOptional } from 'class-validator';
 import { CardModel, CardTier, Thumbnail } from '../services/card.model';
 
 class CardSimpleInputDto {
@@ -29,9 +29,8 @@ class CardSimpleInputDto {
   }
 }
 
-class CardInputDto extends CardSimpleInputDto {
+class CardInputDto {
   constructor(body: CardInputDto) {
-    super(body);
     Object.assign(this, body);
   }
 
@@ -69,4 +68,18 @@ class CardInputDto extends CardSimpleInputDto {
   }
 }
 
-export { CardSimpleInputDto, CardInputDto };
+class CardUpdateInputDto extends CardInputDto {
+  @IsString()
+  @IsOptional()
+  public name: string;
+
+  @IsString()
+  @IsOptional()
+  public description: string;
+
+  @IsOptional()
+  @IsNumber()
+  public price: number;
+}
+
+export { CardSimpleInputDto, CardInputDto, CardUpdateInputDto };

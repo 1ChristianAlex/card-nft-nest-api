@@ -9,7 +9,7 @@ import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 import AuthService from '../services/auth.service';
 import { LoginOutputDto } from './auth.dto';
 import { Request as IRequest } from 'express';
-import { User } from 'src/modules/user/services/user.model';
+import { UserModel } from 'src/modules/user/services/user.model';
 import JwtAppService from '../services/jwt.service';
 
 @Controller('auth')
@@ -20,7 +20,7 @@ class AuthController {
   ) {}
 
   @Post('login')
-  async login(@Request() req: IRequest & { user: User }) {
+  async login(@Request() req: IRequest & { user: UserModel }) {
     try {
       const loginData = await this._authService.doUserLogin(
         req.body.email,

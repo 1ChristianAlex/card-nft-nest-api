@@ -10,7 +10,6 @@ import {
 } from 'typeorm';
 import UserEntity from '../../user/entities/user.entity';
 import TransactionEntity from './transactions.entity';
-import StoreEntity from 'src/modules/store/entities/store.entity';
 
 interface IDeckEntityConstructor {
   id: number;
@@ -61,8 +60,8 @@ class DeckEntity {
   @ManyToOne(() => UserEntity, (user) => user.deck)
   public user: UserEntity;
 
-  @ManyToOne(() => StoreEntity, (store) => store.deck)
-  public store: StoreEntity;
+  // @ManyToOne(() => StoreEntity, (store) => store.deck)
+  // public store: StoreEntity;
 
   @OneToMany(() => CardEntity, (user) => user.deck)
   public card: CardEntity[];

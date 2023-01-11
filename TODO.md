@@ -17,7 +17,7 @@
     - [x] Card tier update
     - [x] Register card images
         - [x] Image repo
-    - [] Change default image
+    - [x] Change default image
 
 ## Deck
 
@@ -27,7 +27,8 @@
     - [x] Transaction Register
     - [x] Discard card
     - [x] Give card
-    - [] Card Markeplace
+    - [x] Card Markeplace
+    - [x] Card Markeplace Purchase
     - [] Decresease trade bonus per trade day
     - [] Wishlist
     - [] Order by

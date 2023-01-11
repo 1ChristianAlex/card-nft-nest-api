@@ -1,4 +1,4 @@
-import { Roles, User } from '../services/user.model';
+import { RolesModel, UserModel } from '../services/user.model';
 import { IsEmail, IsNotEmpty, IsNumber, MinLength } from 'class-validator';
 
 class UserOutputDto {
@@ -12,9 +12,9 @@ class UserOutputDto {
   public email: string;
   public isActive: boolean;
 
-  public role: Roles;
+  public role: RolesModel;
 
-  static fromModel(user: User) {
+  static fromModel(user: UserModel) {
     return new UserOutputDto({
       id: user.id,
       name: user.name,
@@ -48,13 +48,13 @@ class UserInputDto {
   @MinLength(6)
   public password: string;
 
-  static toModel(user: UserInputDto): User {
-    return new User({
+  static toModel(user: UserInputDto): UserModel {
+    return new UserModel({
       id: null,
       name: user.name,
       lastName: user.lastName,
       email: user.email,
-      role: new Roles({ id: user.role }),
+      role: new RolesModel({ id: user.role }),
       password: user.password,
       isActive: true,
     });

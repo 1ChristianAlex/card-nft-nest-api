@@ -18,6 +18,7 @@ import StoreEntity from '../../store/entities/store.entity';
 enum TransactionType {
   TRADE = 'TRADE',
   GIVE = 'GIVE',
+  MARKET = 'MARKET',
 }
 enum TransactionStatus {
   REQUEST = 'REQUEST',

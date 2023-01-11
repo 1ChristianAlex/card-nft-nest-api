@@ -2,13 +2,23 @@ import TransactionEntity from '../../deck/entities/transactions.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import CardEntity from '../../card/entities/card.entity';
 import UserEntity from '../../user/entities/user.entity';
-import DeckEntity from '../../deck/entities/deck.entity';
+
+interface StoreEntityConstructor {
+  price: number;
+  user: Partial<UserEntity>;
+  card: Partial<CardEntity>;
+  transaction: Partial<TransactionEntity>;
+}
 
 @Entity({
   schema: StoreEntity.tableInfo.schema,
   name: StoreEntity.tableInfo.name,
 })
 class StoreEntity {
+  constructor(entity: StoreEntityConstructor) {
+    Object.assign(this, entity);
+  }
+
   @PrimaryGeneratedColumn()
   public id: number;
 
@@ -18,8 +28,8 @@ class StoreEntity {
   @ManyToOne(() => UserEntity, (user) => user.store)
   public user: UserEntity;
 
-  @ManyToOne(() => DeckEntity, (deck) => deck.store)
-  public deck: DeckEntity;
+  // @ManyToOne(() => DeckEntity, (deck) => deck.store)
+  // public deck: DeckEntity;
 
   @ManyToOne(() => CardEntity, (card) => card.store)
   public card: CardEntity;

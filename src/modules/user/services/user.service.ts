@@ -5,7 +5,7 @@ import DeckService from 'src/modules/deck/services/deck.service';
 import { Repository } from 'typeorm';
 import RolesEntity from '../entities/roles.entity';
 import UserEntity from '../entities/user.entity';
-import { ROLES_ID, User } from './user.model';
+import { ROLES_ID, UserModel } from './user.model';
 
 @Injectable()
 class UserService {
@@ -18,12 +18,12 @@ class UserService {
     private deckService: DeckService,
   ) {}
 
-  public async getAllUser(): Promise<User[]> {
+  public async getAllUser(): Promise<UserModel[]> {
     const allUsers = await this.usersRepository.find({
       relations: { role: true, deck: true },
     });
 
-    return allUsers.map(User.fromEntity);
+    return allUsers.map(UserModel.fromEntity);
   }
 
   public async getUserById(id: number) {
@@ -32,7 +32,7 @@ class UserService {
         where: { id },
         relations: { role: true },
       });
-      return User.fromEntity(userById);
+      return UserModel.fromEntity(userById);
     } catch {
       throw new Error('User not found');
     }
@@ -45,13 +45,13 @@ class UserService {
         relations: { role: true },
       });
 
-      return User.fromEntity(userByEmail);
+      return UserModel.fromEntity(userByEmail);
     } catch (error) {
       throw new Error('User not found');
     }
   }
 
-  public async createNewUser(user: User) {
+  public async createNewUser(user: UserModel) {
     const role = await this.roleRepository.findOneBy({
       id: user.role.id ?? ROLES_ID.PLAYER,
     });
@@ -68,7 +68,7 @@ class UserService {
 
     await this.deckService.newDeck(userSaved.id);
 
-    return User.fromEntity(userSaved);
+    return UserModel.fromEntity(userSaved);
   }
 }
 

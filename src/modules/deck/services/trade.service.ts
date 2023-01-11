@@ -4,7 +4,7 @@ import CardEntity from 'src/modules/card/entities/card.entity';
 import { CardValueTrade } from 'src/modules/card/services/card.model';
 import DeckService from 'src/modules/deck/services/deck.service';
 import { In, Repository } from 'typeorm';
-import {
+import TransactionEntity, {
   TransactionStatus,
   TransactionType,
 } from '../entities/transactions.entity';
@@ -58,13 +58,15 @@ class TradeService {
   async requestTrade(
     cardTradeSelf: CardValueTrade,
     cardTradeTarget: CardValueTrade,
-  ): Promise<void> {
+    transactionType = TransactionType.TRADE,
+  ): Promise<TransactionEntity> {
     const selfDeck = await this.deckService.getDeckById(cardTradeSelf.deckId);
 
-    await this.registerRequestTransaction(
+    return await this.registerRequestTransaction(
       selfDeck.user.id,
       cardTradeSelf,
       cardTradeTarget,
+      transactionType,
     );
   }
 
@@ -120,34 +122,37 @@ class TradeService {
     await this.cardRepository.increment({ id: In(allCardsId) }, 'price', 25);
   }
 
-  private async registerRequestTransaction(
+  async registerRequestTransaction(
     selfUserId: number,
     cardTradeSelf: CardValueTrade,
     cardTradeTarget: CardValueTrade,
-  ): Promise<void> {
-    const transaction = await this.transactionService.registerTransaction(
+    transactionType = TransactionType.TRADE,
+  ): Promise<TransactionEntity> {
+    const selfTransaction = await this.transactionService.registerTransaction(
       selfUserId,
       new CardValueTrade(
         cardTradeSelf.deckId,
         cardTradeSelf.cardListIds,
         cardTradeSelf.value,
       ),
-      TransactionType.TRADE,
+      transactionType,
       TransactionStatus.REQUEST,
       null,
     );
 
-    await this.transactionService.registerTransaction(
+    const targetTransaction = await this.transactionService.registerTransaction(
       selfUserId,
       new CardValueTrade(
         cardTradeTarget.deckId,
         cardTradeTarget.cardListIds,
         cardTradeTarget.value,
       ),
-      TransactionType.TRADE,
+      transactionType,
       TransactionStatus.REQUEST,
-      transaction.id,
+      selfTransaction.id,
     );
+
+    return targetTransaction;
   }
 
   private async decreaseWalletTrade(

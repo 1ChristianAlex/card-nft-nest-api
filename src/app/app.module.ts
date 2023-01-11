@@ -41,7 +41,7 @@ import StoreEntity from 'src/modules/store/entities/store.entity';
         TransactionEntity,
         StoreEntity,
       ],
-      synchronize: true,
+      synchronize: false,
       logging: true,
     }),
     CommonLib,

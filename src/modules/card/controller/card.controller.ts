@@ -16,7 +16,7 @@ import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 import UserDecorator from 'src/modules/user/services/user.decorator';
 import { CardModel } from '../services/card.model';
 import CardService from '../services/card.service';
-import { CardSimpleInputDto, CardInputDto } from './card.dto';
+import { CardSimpleInputDto, CardUpdateInputDto } from './card.dto';
 
 @Controller('card')
 @UseGuards(JwtAuthGuard)
@@ -29,7 +29,7 @@ class CardController {
     @UserDecorator() user: UserOutputDto,
   ) {
     try {
-      return this.cardService.registerNewCard(
+      return await this.cardService.registerNewCard(
         CardSimpleInputDto.dtoToModel(cardDto),
         user.id,
       );
@@ -40,10 +40,12 @@ class CardController {
 
   @Put()
   public async updateCard(
-    @Body() cardUpdate: CardInputDto,
+    @Body() cardUpdate: CardUpdateInputDto,
   ): Promise<CardModel> {
     try {
-      return this.cardService.updateCard(CardInputDto.dtoToModel(cardUpdate));
+      return await this.cardService.updateCard(
+        CardUpdateInputDto.dtoToModel(cardUpdate),
+      );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_GATEWAY);
     }
@@ -54,7 +56,7 @@ class CardController {
     @UserDecorator() user: UserOutputDto,
   ): Promise<CardModel> {
     try {
-      return this.cardService.getRandomCard(user.id);
+      return await this.cardService.getRandomCard(user.id);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -77,7 +79,7 @@ class CardController {
     @Param('deckId', ParseIntPipe) deckId: number,
   ): Promise<CardModel[]> {
     try {
-      return this.cardService.listDeckCards(deckId);
+      return await this.cardService.listDeckCards(deckId);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

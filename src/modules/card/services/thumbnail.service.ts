@@ -11,16 +11,12 @@ class ThumbnailService {
   ) {}
 
   async registerImage(imagePath: string, cardId: number, description: string) {
-    const lasPostion = await this.thumbRepository.findOneOrFail({
-      where: { card: { id: cardId } },
-      order: { position: { direction: 'DESC' } },
-    });
     await this.thumbRepository.insert(
       new ThumbsEntity({
         card: { id: cardId },
         description,
         path: imagePath,
-        position: lasPostion.position + 1,
+        position: 1,
       }),
     );
   }

@@ -16,7 +16,7 @@ import TransactionService from './services/transaction.service';
   imports: [
     TypeOrmModule.forFeature([DeckEntity, CardEntity, TransactionEntity]),
   ],
-  exports: [DeckService],
+  exports: [DeckService, TradeService, TransactionService],
 })
 class DeckModule {}
 

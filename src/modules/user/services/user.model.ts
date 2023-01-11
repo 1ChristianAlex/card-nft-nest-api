@@ -7,8 +7,8 @@ enum ROLES_ID {
   PLAYER = 3,
 }
 
-class Roles {
-  constructor(user: Partial<Roles>) {
+class RolesModel {
+  constructor(user: Partial<RolesModel>) {
     Object.assign(this, user);
   }
 
@@ -17,15 +17,15 @@ class Roles {
   public description: string;
 
   static fromEntity(rolesEntity: RolesEntity) {
-    return new Roles({
+    return new RolesModel({
       id: rolesEntity.id,
       description: rolesEntity.description,
     });
   }
 }
 
-class User {
-  constructor(user: User) {
+class UserModel {
+  constructor(user: UserModel) {
     Object.assign(this, user);
   }
 
@@ -38,10 +38,10 @@ class User {
   public updatedDate?: Date;
 
   public createAt?: Date;
-  public role?: Roles;
+  public role?: RolesModel;
 
   static fromEntity(userEntity: UserEntity) {
-    return new User({
+    return new UserModel({
       id: userEntity.id,
       name: userEntity.name,
       lastName: userEntity.lastName,
@@ -50,9 +50,9 @@ class User {
       isActive: userEntity.isActive,
       updatedDate: userEntity.updatedDate,
       createAt: userEntity.createAt,
-      role: userEntity.role ? Roles.fromEntity(userEntity.role) : null,
+      role: userEntity.role ? RolesModel.fromEntity(userEntity.role) : null,
     });
   }
 }
 
-export { User, Roles, ROLES_ID };
+export { UserModel, RolesModel, ROLES_ID };
