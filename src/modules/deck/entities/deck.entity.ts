@@ -51,6 +51,9 @@ class DeckEntity {
   @Column({ type: 'timestamp', nullable: true })
   public nextDaily?: Date;
 
+  @Column({ type: 'timestamp', nullable: true })
+  public nextDailyCoins?: Date;
+
   @UpdateDateColumn()
   public updatedAt?: Date;
 

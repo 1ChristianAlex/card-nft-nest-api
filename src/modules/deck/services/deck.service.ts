@@ -16,11 +16,11 @@ class DeckService {
   ) {}
 
   async decreaseGambles(userId: number) {
-    const userCoins = await this.deckRepository.findOneByOrFail({
+    const userDeck = await this.deckRepository.findOneByOrFail({
       user: { id: userId },
     });
 
-    if (!userCoins.gambles) {
+    if (!userDeck.gambles) {
       throw new Error('User hasnt gambles.');
     }
 
@@ -57,9 +57,9 @@ class DeckService {
   }
 
   public async claimCard(cardId: number, userId: number) {
-    const userCoins = await this.getUserDeck(userId);
+    const userDeck = await this.getUserDeck(userId);
 
-    if (!userCoins.claims) {
+    if (!userDeck.claims) {
       throw new Error('User can not claim right now');
     }
 
@@ -83,11 +83,11 @@ class DeckService {
         status: {
           id: CARD_STATUS_ENUM.CLAIMED,
         },
-        deck: { id: userCoins.id },
+        deck: { id: userDeck.id },
       },
     );
 
-    await this.refreshClaimdedTotal(userCoins);
+    await this.refreshClaimdedTotal(userDeck);
   }
 
   public async refreshAllGumbles() {
@@ -112,12 +112,10 @@ class DeckService {
     });
 
     if (userDeck.nextDaily && Date.now() < userDeck.nextDaily.getTime()) {
-      throw new Error('Daily canot be invoked');
+      throw new Error('Daily gumble reset canot be invoked');
     }
 
-    const nextDaily = new Date();
-
-    nextDaily.setHours(nextDaily.getHours() + 24);
+    const nextDaily = this.dateAddDay();
 
     await this.deckRepository.update(
       { id: userDeck.id },
@@ -126,6 +124,52 @@ class DeckService {
         nextDaily,
       },
     );
+  }
+
+  public async invokeDailyCoins(userId: number): Promise<number> {
+    const userDeck = await this.deckRepository.findOneByOrFail({
+      user: { id: userId },
+    });
+
+    if (
+      userDeck.nextDailyCoins &&
+      Date.now() < userDeck.nextDailyCoins.getTime()
+    ) {
+      throw new Error('Daily coins canot be invoked');
+    }
+
+    let coindAdded = 230;
+
+    if (userDeck.nextDailyCoins) {
+      const lastInvoked = new Date(userDeck.nextDailyCoins);
+      const yesterday = new Date();
+
+      lastInvoked.setHours(lastInvoked.getHours() - 24);
+      yesterday.setHours(lastInvoked.getHours() - 24);
+
+      if (lastInvoked.getDate() === yesterday.getDate()) {
+        coindAdded = coindAdded + 100;
+      }
+    }
+
+    const nextDailyCoins = this.dateAddDay();
+
+    await this.deckRepository.update(
+      { id: userDeck.id },
+      {
+        coins: coindAdded,
+        nextDailyCoins,
+      },
+    );
+
+    return coindAdded;
+  }
+
+  private dateAddDay() {
+    const nextDaily = new Date();
+
+    nextDaily.setHours(nextDaily.getHours() + 24);
+    return nextDaily;
   }
 
   async changeDeckCoins(deckId: number, value: number, isIncresing = true) {

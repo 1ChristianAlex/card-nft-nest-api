@@ -8,6 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/modules/auth/services/jwt-auth.guard';
+import { CommonOutputDto } from 'src/modules/common/common.dto';
 import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 import UserDecorator from 'src/modules/user/services/user.decorator';
 import DeckService from '../services/deck.service';
@@ -34,6 +35,17 @@ class DeckController {
   async invokeDailyReset(@UserDecorator() user: UserOutputDto) {
     try {
       await this.deckService.invokeDailyReset(user.id);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get('/dailyCoins')
+  async invokeDailyCoins(@UserDecorator() user: UserOutputDto) {
+    try {
+      const added = await this.deckService.invokeDailyCoins(user.id);
+
+      return new CommonOutputDto(`${added} added to you`);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
