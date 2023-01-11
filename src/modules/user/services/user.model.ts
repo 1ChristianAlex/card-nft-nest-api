@@ -16,7 +16,7 @@ class Roles {
 
   public description: string;
 
-  static adapterEntityToModel(rolesEntity: RolesEntity) {
+  static fromEntity(rolesEntity: RolesEntity) {
     return new Roles({
       id: rolesEntity.id,
       description: rolesEntity.description,
@@ -40,7 +40,7 @@ class User {
   public createAt?: Date;
   public role?: Roles;
 
-  static adapterEntityToModel(userEntity: UserEntity) {
+  static fromEntity(userEntity: UserEntity) {
     return new User({
       id: userEntity.id,
       name: userEntity.name,
@@ -50,9 +50,7 @@ class User {
       isActive: userEntity.isActive,
       updatedDate: userEntity.updatedDate,
       createAt: userEntity.createAt,
-      role: userEntity.role
-        ? Roles.adapterEntityToModel(userEntity.role)
-        : null,
+      role: userEntity.role ? Roles.fromEntity(userEntity.role) : null,
     });
   }
 }

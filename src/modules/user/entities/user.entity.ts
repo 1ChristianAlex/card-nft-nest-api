@@ -11,6 +11,7 @@ import {
 import RolesEntity from './roles.entity';
 import DeckEntity from '../../deck/entities/deck.entity';
 import TransactionEntity from '../../deck/entities/transactions.entity';
+import StoreEntity from '../../store/entities/store.entity';
 
 interface IUserEntityConstructor {
   name: string;
@@ -60,13 +61,16 @@ class UserEntity {
   public role: RolesEntity;
 
   @OneToMany(() => CardEntity, (card) => card.user)
-  public card: CardEntity;
+  public card: CardEntity[];
 
   @OneToMany(() => DeckEntity, (wallet) => wallet.user)
-  public wallet: DeckEntity;
+  public deck: DeckEntity[];
 
   @OneToMany(() => TransactionEntity, (transaction) => transaction.user)
-  public transaction: TransactionEntity;
+  public transaction: TransactionEntity[];
+
+  @OneToMany(() => StoreEntity, (store) => store.user)
+  public store: StoreEntity[];
 
   static readonly tableInfo = {
     name: 'user',

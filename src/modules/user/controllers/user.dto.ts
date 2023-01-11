@@ -14,7 +14,7 @@ class UserOutputDto {
 
   public role: Roles;
 
-  static adapterUserToDto(user: User) {
+  static fromModel(user: User) {
     return new UserOutputDto({
       id: user.id,
       name: user.name,
@@ -48,7 +48,7 @@ class UserInputDto {
   @MinLength(6)
   public password: string;
 
-  static adapterDtoToUser(user: UserInputDto): User {
+  static toModel(user: UserInputDto): User {
     return new User({
       id: null,
       name: user.name,

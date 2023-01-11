@@ -30,7 +30,7 @@ class RolesEntity {
   public createAt?: Date;
 
   @OneToMany(() => UserEntity, (user) => user.role)
-  public user: UserEntity;
+  public user: UserEntity[];
 
   static readonly tableInfo = {
     name: 'roles',

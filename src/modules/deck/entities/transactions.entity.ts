@@ -9,9 +9,11 @@ import {
   JoinTable,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import DeckEntity from './deck.entity';
 import UserEntity from '../../user/entities/user.entity';
+import StoreEntity from '../../store/entities/store.entity';
 
 enum TransactionType {
   TRADE = 'TRADE',
@@ -63,7 +65,7 @@ class TransactionEntity {
   public deck: DeckEntity;
 
   // user who create a request
-  @ManyToOne(() => UserEntity, (user) => user.wallet)
+  @ManyToOne(() => UserEntity, (user) => user.transaction)
   public user: UserEntity;
 
   @OneToOne(() => TransactionEntity, (transaction) => transaction.transaction, {
@@ -71,6 +73,9 @@ class TransactionEntity {
   })
   @JoinColumn()
   public transaction: TransactionEntity;
+
+  @OneToMany(() => StoreEntity, (store) => store.transaction)
+  public store: StoreEntity[];
 
   @ManyToMany(() => CardEntity)
   @JoinTable()

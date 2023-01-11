@@ -16,6 +16,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import DeckModule from 'src/modules/deck/deck.module';
 import TransactionEntity from 'src/modules/deck/entities/transactions.entity';
 import CommonLib from 'src/lib/lib.module';
+import StoreModule from 'src/modules/store/store.module';
+import StoreEntity from 'src/modules/store/entities/store.entity';
 
 @Module({
   imports: [
@@ -37,6 +39,7 @@ import CommonLib from 'src/lib/lib.module';
         DeckEntity,
         CardStatusEntity,
         TransactionEntity,
+        StoreEntity,
       ],
       synchronize: true,
       logging: true,
@@ -46,6 +49,7 @@ import CommonLib from 'src/lib/lib.module';
     AuthModule,
     CardModule,
     DeckModule,
+    StoreModule,
   ],
 })
 class AppModule {}

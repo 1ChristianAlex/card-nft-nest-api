@@ -19,9 +19,11 @@ class UserService {
   ) {}
 
   public async getAllUser(): Promise<User[]> {
-    const allUsers = await this.usersRepository.find();
+    const allUsers = await this.usersRepository.find({
+      relations: { role: true, deck: true },
+    });
 
-    return allUsers.map(User.adapterEntityToModel);
+    return allUsers.map(User.fromEntity);
   }
 
   public async getUserById(id: number) {
@@ -30,7 +32,7 @@ class UserService {
         where: { id },
         relations: { role: true },
       });
-      return User.adapterEntityToModel(userById);
+      return User.fromEntity(userById);
     } catch {
       throw new Error('User not found');
     }
@@ -43,7 +45,7 @@ class UserService {
         relations: { role: true },
       });
 
-      return User.adapterEntityToModel(userByEmail);
+      return User.fromEntity(userByEmail);
     } catch (error) {
       throw new Error('User not found');
     }
@@ -66,7 +68,7 @@ class UserService {
 
     await this.deckService.newDeck(userSaved.id);
 
-    return User.adapterEntityToModel(userSaved);
+    return User.fromEntity(userSaved);
   }
 }
 

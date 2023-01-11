@@ -28,7 +28,7 @@ class UserController {
 
     const userList = await this._userService.getAllUser();
 
-    return userList.map(UserOutputDto.adapterUserToDto);
+    return userList.map(UserOutputDto.fromModel);
   }
 
   @Get('/:id')
@@ -38,7 +38,7 @@ class UserController {
     try {
       const user = await this._userService.getUserById(id);
 
-      return UserOutputDto.adapterUserToDto(user);
+      return UserOutputDto.fromModel(user);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
@@ -62,9 +62,9 @@ class UserController {
         );
       }
 
-      const user = UserInputDto.adapterDtoToUser(userInput);
+      const user = UserInputDto.toModel(userInput);
 
-      return UserOutputDto.adapterUserToDto(
+      return UserOutputDto.fromModel(
         await this._userService.createNewUser(user),
       );
     } catch (error) {

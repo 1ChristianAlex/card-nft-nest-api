@@ -27,7 +27,7 @@ class AuthController {
         req.body.password,
       );
 
-      const userDto = UserOutputDto.adapterUserToDto(loginData);
+      const userDto = UserOutputDto.fromModel(loginData);
 
       return new LoginOutputDto(userDto, this.jwtAppService.doSing(userDto));
     } catch (error) {

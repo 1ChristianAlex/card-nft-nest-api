@@ -39,7 +39,7 @@ class TierEntity {
   public createAt?: Date;
 
   @OneToMany(() => CardEntity, (card) => card.tier)
-  public card: CardEntity;
+  public card: CardEntity[];
 
   static readonly tableInfo = {
     name: 'tiers',

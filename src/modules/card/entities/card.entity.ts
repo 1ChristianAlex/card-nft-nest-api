@@ -12,6 +12,7 @@ import TierEntity from './tier.entity';
 import UserEntity from '../../user/entities/user.entity';
 import DeckEntity from '../../deck/entities/deck.entity';
 import CardStatusEntity from './cardStatus.entity';
+import StoreEntity from '../../store/entities/store.entity';
 
 interface ICardEntityConstructor {
   name: string;
@@ -63,6 +64,9 @@ class CardEntity {
 
   @OneToMany(() => ThumbsEntity, (thumb) => thumb.card)
   public thumbnail: ThumbsEntity[];
+
+  @OneToMany(() => StoreEntity, (store) => store.card)
+  public store: StoreEntity[];
 
   @ManyToOne(() => UserEntity, (user) => user.card)
   public user: UserEntity;
