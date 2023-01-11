@@ -34,7 +34,7 @@ class DeckEntity {
   public id: number;
 
   @Column({ type: 'integer', default: 0 })
-  public wallet: number;
+  public coins: number;
 
   @Column({ type: 'integer', default: 0 })
   public deckAmount: number;
@@ -52,16 +52,13 @@ class DeckEntity {
   public nextDaily?: Date;
 
   @UpdateDateColumn()
-  public updatedDate?: Date;
+  public updatedAt?: Date;
 
   @CreateDateColumn()
   public createAt?: Date;
 
   @ManyToOne(() => UserEntity, (user) => user.deck)
   public user: UserEntity;
-
-  // @ManyToOne(() => StoreEntity, (store) => store.deck)
-  // public store: StoreEntity;
 
   @OneToMany(() => CardEntity, (user) => user.deck)
   public card: CardEntity[];

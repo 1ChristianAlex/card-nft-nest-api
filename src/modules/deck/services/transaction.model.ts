@@ -11,7 +11,7 @@ class TransactionModel {
   }
 
   public id: number;
-  public wallet: number;
+  public coins: number;
   public type: TransactionType;
   public status: TransactionStatus;
   public transactedAt: Date;
@@ -21,7 +21,7 @@ class TransactionModel {
 
   static fromEntity(entity: TransactionEntity): TransactionModel {
     return new TransactionModel({
-      wallet: entity.wallet,
+      coins: entity.coins,
       type: entity.type,
       status: entity.status,
       transactedAt: entity.transactedAt,

@@ -5,7 +5,7 @@ import { CardValueTrade } from 'src/modules/card/services/card.model';
 import { TransactionType } from 'src/modules/deck/entities/transactions.entity';
 import DeckService from 'src/modules/deck/services/deck.service';
 import TradeService from 'src/modules/deck/services/trade.service';
-import { Repository, Not, Equal, IsNull } from 'typeorm';
+import { Repository, IsNull } from 'typeorm';
 import StoreEntity from '../entities/store.entity';
 import { StoreModel } from './store.model';
 
@@ -53,8 +53,8 @@ class StoreService {
 
   async purchaseCardInStore(storeId: number, userId: number) {
     const storeItem = await this.storeRepository.findOneOrFail({
-      where: { id: storeId },
-      relations: { card: { deck: true }, user: true, transaction: true },
+      where: { id: storeId, transaction: IsNull() },
+      relations: { card: { deck: true }, user: true },
     });
 
     if (storeItem.user.id === userId) {
@@ -62,6 +62,10 @@ class StoreService {
     }
 
     const deckTarget = await this.deckService.getUserDeck(userId);
+
+    if (deckTarget.coins < storeItem.price) {
+      throw new Error('User has not enought money');
+    }
 
     const transaction = await this.tradeService.requestTrade(
       new CardValueTrade(storeItem.card.deck.id, [storeItem.card.id], 0),

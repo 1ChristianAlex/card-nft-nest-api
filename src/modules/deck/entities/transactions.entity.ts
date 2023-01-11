@@ -27,7 +27,7 @@ enum TransactionStatus {
 }
 
 interface TransactionEntityContructor {
-  wallet: number;
+  coins: number;
   type: TransactionType;
   status: TransactionStatus;
 
@@ -51,7 +51,7 @@ class TransactionEntity {
   public id: number;
 
   @Column({ type: 'integer', default: 0 })
-  public wallet: number;
+  public coins: number;
 
   @Column({ type: 'text' })
   public type: TransactionType;

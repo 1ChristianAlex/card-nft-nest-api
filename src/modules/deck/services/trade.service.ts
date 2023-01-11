@@ -8,7 +8,7 @@ import TransactionEntity, {
   TransactionStatus,
   TransactionType,
 } from '../entities/transactions.entity';
-import { IncreaseWalletParams } from './deck.model';
+import { IncreaseCoinsParams } from './deck.model';
 import TransactionService from './transaction.service';
 
 @Injectable()
@@ -32,15 +32,15 @@ class TradeService {
     }
 
     if (cardGived.value) {
-      const walletOne = new IncreaseWalletParams(
+      const coinsOne = new IncreaseCoinsParams(
         cardGived.deckId,
         cardGived.value,
       );
-      const walletTwo = new IncreaseWalletParams(deckIdToGive, 0);
+      const coinsTwo = new IncreaseCoinsParams(deckIdToGive, 0);
 
       await Promise.all([
-        this.increaseWalletTrade(walletOne, walletTwo),
-        this.decreaseWalletTrade(walletOne, walletTwo),
+        this.increaseCoinsTrade(coinsOne, coinsTwo),
+        this.decreaseCoinsTrade(coinsOne, coinsTwo),
       ]);
     }
 
@@ -103,18 +103,18 @@ class TradeService {
       this.updateDeckCardList(cardsDbTarget, cardTradeSelf.deckId),
     ]);
 
-    const walletSelf = new IncreaseWalletParams(
+    const coinsSelf = new IncreaseCoinsParams(
       cardTradeSelf.deckId,
       cardTradeSelf.value,
     );
-    const walletTarget = new IncreaseWalletParams(
+    const coinsTarget = new IncreaseCoinsParams(
       cardTradeTarget.deckId,
       cardTradeTarget.value,
     );
 
     await Promise.all([
-      this.increaseWalletTrade(walletSelf, walletTarget),
-      this.decreaseWalletTrade(walletSelf, walletTarget),
+      this.increaseCoinsTrade(coinsSelf, coinsTarget),
+      this.decreaseCoinsTrade(coinsSelf, coinsTarget),
     ]);
 
     const allCardsId = [...cardsDbTarget, ...cardsDbSelf].map(({ id }) => id);
@@ -155,37 +155,37 @@ class TradeService {
     return targetTransaction;
   }
 
-  private async decreaseWalletTrade(
-    cardOne: IncreaseWalletParams,
-    cardTradeTwo: IncreaseWalletParams,
+  private async decreaseCoinsTrade(
+    cardOne: IncreaseCoinsParams,
+    cardTradeTwo: IncreaseCoinsParams,
   ): Promise<void> {
     await Promise.all([
-      this.deckService.changeDeckWallet(
+      this.deckService.changeDeckCoins(
         cardOne.deckId,
-        cardOne.walletValue,
+        cardOne.coinsValue,
         false,
       ),
-      this.deckService.changeDeckWallet(
+      this.deckService.changeDeckCoins(
         cardTradeTwo.deckId,
-        cardTradeTwo.walletValue,
+        cardTradeTwo.coinsValue,
         false,
       ),
     ]);
   }
 
-  private async increaseWalletTrade(
-    cardOne: IncreaseWalletParams,
-    cardTradeTwo: IncreaseWalletParams,
+  private async increaseCoinsTrade(
+    cardOne: IncreaseCoinsParams,
+    cardTradeTwo: IncreaseCoinsParams,
   ): Promise<void> {
     await Promise.all([
-      this.deckService.changeDeckWallet(
+      this.deckService.changeDeckCoins(
         cardOne.deckId,
-        cardTradeTwo.walletValue,
+        cardTradeTwo.coinsValue,
         true,
       ),
-      this.deckService.changeDeckWallet(
+      this.deckService.changeDeckCoins(
         cardTradeTwo.deckId,
-        cardOne.walletValue,
+        cardOne.coinsValue,
         true,
       ),
     ]);

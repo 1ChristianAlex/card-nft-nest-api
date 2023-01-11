@@ -20,7 +20,7 @@ interface IUserEntityConstructor {
   password: string;
   role?: RolesEntity;
   card?: CardEntity;
-  wallet?: DeckEntity;
+  coins?: DeckEntity;
   id?: number;
 }
 
@@ -63,7 +63,7 @@ class UserEntity {
   @OneToMany(() => CardEntity, (card) => card.user)
   public card: CardEntity[];
 
-  @OneToMany(() => DeckEntity, (wallet) => wallet.user)
+  @OneToMany(() => DeckEntity, (coins) => coins.user)
   public deck: DeckEntity[];
 
   @OneToMany(() => TransactionEntity, (transaction) => transaction.user)

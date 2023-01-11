@@ -17,7 +17,7 @@ export class migration1673460516251 implements MigrationInterface {
       `CREATE TABLE "store"."store" ("id" SERIAL NOT NULL, "price" integer NOT NULL DEFAULT '0', "userId" integer, "cardId" integer, "transactionId" integer, CONSTRAINT "REL_87ebc50c68badd7b800f7014f1" UNIQUE ("transactionId"), CONSTRAINT "PK_f3172007d4de5ae8e7692759d79" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "card"."transaction" ("id" SERIAL NOT NULL, "wallet" integer NOT NULL DEFAULT '0', "type" text NOT NULL, "status" text NOT NULL DEFAULT 'REQUEST', "transactedAt" TIMESTAMP NOT NULL DEFAULT now(), "deckId" integer, "userId" integer, "transactionId" integer, CONSTRAINT "REL_bdcf2c929b61c0935576652d9b" UNIQUE ("transactionId"), CONSTRAINT "PK_89eadb93a89810556e1cbcd6ab9" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "card"."transaction" ("id" SERIAL NOT NULL, "coins" integer NOT NULL DEFAULT '0', "type" text NOT NULL, "status" text NOT NULL DEFAULT 'REQUEST', "transactedAt" TIMESTAMP NOT NULL DEFAULT now(), "deckId" integer, "userId" integer, "transactionId" integer, CONSTRAINT "REL_bdcf2c929b61c0935576652d9b" UNIQUE ("transactionId"), CONSTRAINT "PK_89eadb93a89810556e1cbcd6ab9" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "user"."user" ("id" SERIAL NOT NULL, "name" text NOT NULL, "lastName" text NOT NULL, "email" text NOT NULL, "password" text NOT NULL, "isActive" boolean NOT NULL DEFAULT true, "updatedDate" TIMESTAMP NOT NULL DEFAULT now(), "createAt" TIMESTAMP NOT NULL DEFAULT now(), "roleId" integer, CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email"), CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`,
@@ -29,7 +29,7 @@ export class migration1673460516251 implements MigrationInterface {
       `CREATE TABLE "card"."card" ("id" SERIAL NOT NULL, "name" text NOT NULL, "description" text NOT NULL, "price" integer NOT NULL DEFAULT '30', "likes" integer NOT NULL, "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "createAt" TIMESTAMP NOT NULL DEFAULT now(), "tierId" integer, "statusId" integer, "userId" integer, "deckId" integer, CONSTRAINT "PK_9451069b6f1199730791a7f4ae4" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "card"."deck" ("id" SERIAL NOT NULL, "wallet" integer NOT NULL DEFAULT '0', "deckAmount" integer NOT NULL DEFAULT '0', "claims" integer NOT NULL DEFAULT '1', "gambles" integer NOT NULL DEFAULT '8', "nextGamble" TIMESTAMP, "nextDaily" TIMESTAMP, "updatedDate" TIMESTAMP NOT NULL DEFAULT now(), "createAt" TIMESTAMP NOT NULL DEFAULT now(), "userId" integer, CONSTRAINT "PK_99f8010303acab0edf8e1df24f9" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "card"."deck" ("id" SERIAL NOT NULL, "coins" integer NOT NULL DEFAULT '0', "deckAmount" integer NOT NULL DEFAULT '0', "claims" integer NOT NULL DEFAULT '1', "gambles" integer NOT NULL DEFAULT '8', "nextGamble" TIMESTAMP, "nextDaily" TIMESTAMP, "updatedDate" TIMESTAMP NOT NULL DEFAULT now(), "createAt" TIMESTAMP NOT NULL DEFAULT now(), "userId" integer, CONSTRAINT "PK_99f8010303acab0edf8e1df24f9" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "card"."transaction_cards_card" ("transactionId" integer NOT NULL, "cardId" integer NOT NULL, CONSTRAINT "PK_edbc84f28404140eed987cd5a51" PRIMARY KEY ("transactionId", "cardId"))`,

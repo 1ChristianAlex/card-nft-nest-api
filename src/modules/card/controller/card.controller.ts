@@ -63,7 +63,7 @@ class CardController {
   }
 
   @Delete('/discard/:cardId')
-  async discardAndIncreseWallet(
+  async discardAndIncreseCoins(
     @Param('cardId', ParseIntPipe) cardId: number,
     @UserDecorator() user: UserOutputDto,
   ) {

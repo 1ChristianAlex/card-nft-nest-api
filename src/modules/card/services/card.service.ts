@@ -168,7 +168,7 @@ class CardService {
         { id: cardId },
         { deck: { id: null }, status: { id: CARD_STATUS_ENUM.FREE } },
       ),
-      this.deckService.changeDeckWallet(
+      this.deckService.changeDeckCoins(
         cardToDiscard.deck.id,
         this.cardPriceService.doTierMultiplier(cardToDiscard),
         true,

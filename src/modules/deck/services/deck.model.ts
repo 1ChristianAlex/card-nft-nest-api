@@ -1,6 +1,6 @@
 import DeckEntity from '../entities/deck.entity';
-class IncreaseWalletParams {
-  constructor(public deckId: number, public walletValue: number) {}
+class IncreaseCoinsParams {
+  constructor(public deckId: number, public coinsValue: number) {}
 }
 class DeckModel {
   constructor(model: DeckModel) {
@@ -8,7 +8,7 @@ class DeckModel {
   }
 
   public id: number;
-  public wallet: number;
+  public coins: number;
   public deckAmount: number;
   public claims: number;
   public gambles: number;
@@ -18,7 +18,7 @@ class DeckModel {
   static fromEntity(entity: DeckEntity) {
     return new DeckModel({
       id: entity.id,
-      wallet: entity.wallet,
+      coins: entity.coins,
       deckAmount: entity.deckAmount,
       claims: entity.claims,
       gambles: entity.gambles,
@@ -28,4 +28,4 @@ class DeckModel {
   }
 }
 
-export { IncreaseWalletParams, DeckModel };
+export { IncreaseCoinsParams, DeckModel };

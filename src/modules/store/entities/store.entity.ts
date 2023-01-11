@@ -1,5 +1,12 @@
 import TransactionEntity from '../../deck/entities/transactions.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import CardEntity from '../../card/entities/card.entity';
 import UserEntity from '../../user/entities/user.entity';
 
@@ -25,11 +32,14 @@ class StoreEntity {
   @Column({ type: 'integer', default: 0 })
   public price: number;
 
+  @UpdateDateColumn()
+  public updatedAt?: Date;
+
+  @CreateDateColumn()
+  public createAt?: Date;
+
   @ManyToOne(() => UserEntity, (user) => user.store)
   public user: UserEntity;
-
-  // @ManyToOne(() => DeckEntity, (deck) => deck.store)
-  // public deck: DeckEntity;
 
   @ManyToOne(() => CardEntity, (card) => card.store)
   public card: CardEntity;

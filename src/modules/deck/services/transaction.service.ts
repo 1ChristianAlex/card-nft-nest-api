@@ -26,7 +26,7 @@ class TransactionService {
       new TransactionEntity({
         cards: payloadTraded.cardListIds.map((id) => ({ id })),
         deck: { id: payloadTraded.deckId },
-        wallet: payloadTraded.value,
+        coins: payloadTraded.value,
         user: { id: userId },
         type,
         status,
@@ -77,13 +77,13 @@ class TransactionService {
     const selfCardValueTrade = new CardValueTrade(
       self.deck.id,
       self.cards.map(({ id }) => id),
-      self.wallet ?? 0,
+      self.coins ?? 0,
     );
 
     const targetCardValueTrade = new CardValueTrade(
       target.deck.id,
       target.cards.map(({ id }) => id),
-      target.wallet ?? 0,
+      target.coins ?? 0,
     );
 
     return [selfCardValueTrade, targetCardValueTrade];

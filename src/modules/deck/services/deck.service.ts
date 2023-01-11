@@ -16,11 +16,11 @@ class DeckService {
   ) {}
 
   async decreaseGambles(userId: number) {
-    const userWallet = await this.deckRepository.findOneByOrFail({
+    const userCoins = await this.deckRepository.findOneByOrFail({
       user: { id: userId },
     });
 
-    if (!userWallet.gambles) {
+    if (!userCoins.gambles) {
       throw new Error('User hasnt gambles.');
     }
 
@@ -57,9 +57,9 @@ class DeckService {
   }
 
   public async claimCard(cardId: number, userId: number) {
-    const userWallet = await this.getUserDeck(userId);
+    const userCoins = await this.getUserDeck(userId);
 
-    if (!userWallet.claims) {
+    if (!userCoins.claims) {
       throw new Error('User can not claim right now');
     }
 
@@ -83,11 +83,11 @@ class DeckService {
         status: {
           id: CARD_STATUS_ENUM.CLAIMED,
         },
-        deck: { id: userWallet.id },
+        deck: { id: userCoins.id },
       },
     );
 
-    await this.refreshClaimdedTotal(userWallet);
+    await this.refreshClaimdedTotal(userCoins);
   }
 
   public async refreshAllGumbles() {
@@ -128,9 +128,9 @@ class DeckService {
     );
   }
 
-  async changeDeckWallet(deckId: number, value: number, isIncresing = true) {
+  async changeDeckCoins(deckId: number, value: number, isIncresing = true) {
     if (isIncresing) {
-      await this.deckRepository.increment({ id: deckId }, 'wallet', value);
+      await this.deckRepository.increment({ id: deckId }, 'coins', value);
     } else {
       const currentDeck = await this.deckRepository.findOne({
         where: { id: deckId },
@@ -138,13 +138,13 @@ class DeckService {
 
       let valueToDecrement = value;
 
-      if (currentDeck.wallet < value) {
+      if (currentDeck.coins < value) {
         valueToDecrement = value + value * 0.25;
       }
 
       await this.deckRepository.decrement(
         { id: deckId },
-        'wallet',
+        'coins',
         valueToDecrement,
       );
     }
