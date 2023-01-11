@@ -21,8 +21,9 @@
 
 ## Deck
 
-    - [x] Gambles reset
-    - [x] Gambles daily
+    - [x] Gambles reset cron
+    - [x] daily Gambles reset
+    - [x] daily coins reset
     - [x] Trade card
     - [x] Transaction Register
     - [x] Discard card
