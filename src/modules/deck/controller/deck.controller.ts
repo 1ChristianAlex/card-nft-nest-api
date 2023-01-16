@@ -11,6 +11,7 @@ import { JwtAuthGuard } from 'src/modules/auth/services/jwt-auth.guard';
 import { CommonOutputDto } from 'src/modules/common/common.dto';
 import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 import UserDecorator from 'src/modules/user/services/user.decorator';
+import { DeckModel } from '../services/deck.model';
 import DeckService from '../services/deck.service';
 import { CardClaimInputDto } from './deck.dto';
 
@@ -46,6 +47,17 @@ class DeckController {
       const added = await this.deckService.invokeDailyCoins(user.id);
 
       return new CommonOutputDto(`${added} added to you`);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get('user')
+  async getDeckFromUser(@UserDecorator() user: UserOutputDto) {
+    try {
+      const userDeck = await this.deckService.getUserDeck(user.id);
+
+      return DeckModel.fromEntity(userDeck);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

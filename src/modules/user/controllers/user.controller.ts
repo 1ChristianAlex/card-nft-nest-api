@@ -16,11 +16,11 @@ import UserService from '../services/user.service';
 import { UserInputDto, UserOutputDto } from './user.dto';
 
 @Controller('users')
-@UseGuards(JwtAuthGuard)
 class UserController {
   constructor(private _userService: UserService) {}
 
   @Get('/')
+  @UseGuards(JwtAuthGuard)
   async findAll(
     @UserDecorator() currentUser: UserInputDto,
   ): Promise<UserOutputDto[]> {
@@ -32,6 +32,7 @@ class UserController {
   }
 
   @Get('/:id')
+  @UseGuards(JwtAuthGuard)
   async findById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<UserOutputDto> {
@@ -45,23 +46,8 @@ class UserController {
   }
 
   @Post()
-  async createUser(
-    @Body() userInput: UserInputDto,
-    @UserDecorator() userToken: UserOutputDto,
-  ): Promise<UserOutputDto> {
+  async createUser(@Body() userInput: UserInputDto): Promise<UserOutputDto> {
     try {
-      if (
-        (userToken.role.id !== ROLES_ID.ADMIN &&
-          userInput.role === ROLES_ID.ADMIN) ||
-        (![ROLES_ID.ADMIN, ROLES_ID.MANAGER].includes(userToken.role.id) &&
-          userInput.role === ROLES_ID.MANAGER)
-      ) {
-        throw new HttpException(
-          'User has no correct privileges',
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-
       const user = UserInputDto.toModel(userInput);
 
       return UserOutputDto.fromModel(

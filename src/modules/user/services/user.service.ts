@@ -53,7 +53,7 @@ class UserService {
 
   public async createNewUser(user: UserModel) {
     const role = await this.roleRepository.findOneBy({
-      id: user.role.id ?? ROLES_ID.PLAYER,
+      id: ROLES_ID.PLAYER,
     });
 
     const newUser = new UserEntity({
