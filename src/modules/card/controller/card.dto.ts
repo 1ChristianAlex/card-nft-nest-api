@@ -71,15 +71,15 @@ class CardInputDto {
 class CardUpdateInputDto extends CardInputDto {
   @IsString()
   @IsOptional()
-  public name: string;
+  public declare name: string;
 
   @IsString()
   @IsOptional()
-  public description: string;
+  public declare description: string;
 
   @IsOptional()
   @IsNumber()
-  public price: number;
+  public declare price: number;
 }
 
 export { CardSimpleInputDto, CardInputDto, CardUpdateInputDto };

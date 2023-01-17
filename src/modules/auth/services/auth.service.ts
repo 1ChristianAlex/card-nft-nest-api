@@ -10,7 +10,9 @@ class AuthService {
   ) {}
 
   async doUserLogin(email: string, password: string) {
-    const user = await this._userService.getUserByEmail(email);
+    const user = await this._userService.getUserByEmail(email).catch(() => {
+      throw new Error('Wrong email/password');
+    });
 
     if (!user.isActive) {
       throw new Error('User is no longer active');

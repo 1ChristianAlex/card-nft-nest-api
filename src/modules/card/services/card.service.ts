@@ -117,9 +117,11 @@ class CardService {
       .createQueryBuilder('card')
       .select('card.id')
       // .innerJoinAndSelect(TierEntity, 'tier', 'card.tierId = tier.id')
-      // .innerJoinAndSelect(ThumbsEntity, 'thumb', 'card.id = thumb.cardId')
       .where(`card.statusId = ${CARD_STATUS_ENUM.FREE}`)
       .andWhere('card.deckId is NULL')
+      .andWhere(
+        'card.id in(select "thumbs"."cardId" from card.thumbs "thumbs")',
+      )
       .orderBy('RANDOM()')
       .getOneOrFail();
 
