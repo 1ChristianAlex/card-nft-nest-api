@@ -15,7 +15,7 @@ class DeckModel {
   public nextGamble?: Date;
   public nextDaily?: Date;
 
-  static fromEntity(entity: DeckEntity) {
+  static fromEntity(entity: DeckEntity): DeckModel {
     return new DeckModel({
       id: entity.id,
       coins: entity.coins,

@@ -3,7 +3,7 @@ import { hash, genSalt, compare } from 'bcrypt';
 
 @Injectable()
 class PasswordHash {
-  async genHash(password: string) {
+  async genHash(password: string): Promise<string> {
     const salt = await genSalt();
 
     const hashed = await hash(password, salt);
@@ -11,7 +11,7 @@ class PasswordHash {
     return hashed;
   }
 
-  async compareHash(hash: string, password: string) {
+  async compareHash(hash: string, password: string): Promise<boolean> {
     return compare(password, hash);
   }
 }

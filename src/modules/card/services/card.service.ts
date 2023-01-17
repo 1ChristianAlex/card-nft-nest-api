@@ -5,6 +5,7 @@ import { Equal, Not, Repository, MoreThanOrEqual } from 'typeorm';
 import CardEntity from '../entities/card.entity';
 import { CARD_STATUS_ENUM } from '../entities/cardStatus.entity';
 import TierEntity from '../entities/tier.entity';
+import CardMessages from './card.messages';
 import { CardModel } from './card.model';
 import CardPriceService from './cardPrice.service';
 
@@ -34,7 +35,7 @@ class CardService {
 
   private readonly claimTime = 15;
 
-  private async renewCardStatus(cardId: number) {
+  private async renewCardStatus(cardId: number): Promise<void> {
     const currentTime = new Date();
 
     currentTime.setSeconds(currentTime.getSeconds() + this.claimTime);
@@ -116,7 +117,6 @@ class CardService {
     const randomId = await this.cardRepository
       .createQueryBuilder('card')
       .select('card.id')
-      // .innerJoinAndSelect(TierEntity, 'tier', 'card.tierId = tier.id')
       .where(`card.statusId = ${CARD_STATUS_ENUM.FREE}`)
       .andWhere('card.deckId is NULL')
       .andWhere(
@@ -151,18 +151,18 @@ class CardService {
     return CardModel.fromEntity(random);
   }
 
-  async discardCard(cardId: number, userId: number) {
+  async discardCard(cardId: number, userId: number): Promise<void> {
     const cardToDiscard = await this.cardRepository
       .findOneOrFail({
         where: { id: cardId },
         relations: { deck: { user: true }, tier: true },
       })
       .catch(() => {
-        throw new Error('Card do not belongs to anyone. Cant be discarded.');
+        throw new Error(CardMessages.WITHOUT_OWNER);
       });
 
     if (userId !== cardToDiscard.deck.user.id) {
-      throw new Error('Card must be owned by current user to be dicarted.');
+      throw new Error(CardMessages.DIFF_OWNER);
     }
 
     await Promise.all([

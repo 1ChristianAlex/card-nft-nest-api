@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/modules/auth/services/jwt-auth.guard';
 import UserDecorator from '../services/user.decorator';
-import { ROLES_ID } from '../services/user.model';
 import UserService from '../services/user.service';
 import { UserInputDto, UserOutputDto } from './user.dto';
 

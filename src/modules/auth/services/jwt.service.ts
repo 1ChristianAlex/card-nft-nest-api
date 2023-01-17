@@ -7,7 +7,7 @@ import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 class JwtAppService {
   constructor(private jwtService: JwtService) {}
 
-  doSing(userDto: UserOutputDto) {
+  doSing(userDto: UserOutputDto): string {
     return this.jwtService.sign({ ...userDto }, JwtAppService.jwtOptions);
   }
 

@@ -11,17 +11,17 @@ class CardPriceService {
     private cardRepository: Repository<CardEntity>,
   ) {}
 
-  async applyTierMultiplier(card: CardEntity) {
+  applyTierMultiplier(card: CardEntity): CardEntity {
     card.price = this.doTierMultiplier(card);
 
     return card;
   }
 
-  doTierMultiplier(card: CardEntity) {
+  doTierMultiplier(card: CardEntity): number {
     return card.price * card.tier.value;
   }
 
-  async checkCardTier(card: CardEntity) {
+  async checkCardTier(card: CardEntity): Promise<void> {
     let currentTier = card.tier.id;
 
     if (card.price <= 400) {

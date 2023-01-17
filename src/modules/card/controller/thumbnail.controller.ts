@@ -35,7 +35,7 @@ class ThumbnailController {
     )
     file: Express.Multer.File,
     @Body() body: ThumbnailInputDto,
-  ) {
+  ): Promise<void> {
     try {
       const filePath = await this.awsS3Service.uploadImageToBucket(
         file.buffer,

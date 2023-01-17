@@ -70,7 +70,7 @@ class TradeService {
     );
   }
 
-  async doTrade(transactionId: number) {
+  async doTrade(transactionId: number): Promise<void> {
     await this.transactionService.updateTransaction(
       transactionId,
       TransactionStatus.ACCEPT,
@@ -82,7 +82,7 @@ class TradeService {
     await this.tradeCards(selfCardValueTrade, targetCardValueTrade);
   }
 
-  async declineTrade(transactionId: number) {
+  async declineTrade(transactionId: number): Promise<void> {
     await this.transactionService.updateTransaction(
       transactionId,
       TransactionStatus.DENIED,

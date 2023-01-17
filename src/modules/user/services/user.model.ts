@@ -16,7 +16,7 @@ class RolesModel {
 
   public description: string;
 
-  static fromEntity(rolesEntity: RolesEntity) {
+  static fromEntity(rolesEntity: RolesEntity): RolesModel {
     return new RolesModel({
       id: rolesEntity.id,
       description: rolesEntity.description,
@@ -40,7 +40,7 @@ class UserModel {
   public createAt?: Date;
   public role?: RolesModel;
 
-  static fromEntity(userEntity: UserEntity) {
+  static fromEntity(userEntity: UserEntity): UserModel {
     return new UserModel({
       id: userEntity.id,
       name: userEntity.name,

@@ -20,7 +20,9 @@ class AuthController {
   ) {}
 
   @Post('login')
-  async login(@Request() req: IRequest & { user: UserModel }) {
+  async login(
+    @Request() req: IRequest & { user: UserModel },
+  ): Promise<LoginOutputDto> {
     try {
       const loginData = await this._authService.doUserLogin(
         req.body.email,

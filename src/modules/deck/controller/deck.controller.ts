@@ -24,7 +24,7 @@ class DeckController {
   async claimCard(
     @Body() cardClaim: CardClaimInputDto,
     @UserDecorator() user: UserOutputDto,
-  ) {
+  ): Promise<void> {
     try {
       await this.deckService.claimCard(cardClaim.id, user.id);
     } catch (error) {
@@ -33,7 +33,7 @@ class DeckController {
   }
 
   @Get('/daily')
-  async invokeDailyReset(@UserDecorator() user: UserOutputDto) {
+  async invokeDailyReset(@UserDecorator() user: UserOutputDto): Promise<void> {
     try {
       await this.deckService.invokeDailyReset(user.id);
     } catch (error) {
@@ -42,7 +42,9 @@ class DeckController {
   }
 
   @Get('/dailyCoins')
-  async invokeDailyCoins(@UserDecorator() user: UserOutputDto) {
+  async invokeDailyCoins(
+    @UserDecorator() user: UserOutputDto,
+  ): Promise<CommonOutputDto> {
     try {
       const added = await this.deckService.invokeDailyCoins(user.id);
 
@@ -53,7 +55,9 @@ class DeckController {
   }
 
   @Get('user')
-  async getDeckFromUser(@UserDecorator() user: UserOutputDto) {
+  async getDeckFromUser(
+    @UserDecorator() user: UserOutputDto,
+  ): Promise<DeckModel> {
     try {
       const userDeck = await this.deckService.getUserDeck(user.id);
 

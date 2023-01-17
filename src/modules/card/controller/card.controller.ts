@@ -27,14 +27,14 @@ class CardController {
   public async registerNewCard(
     @Body() cardDto: CardSimpleInputDto,
     @UserDecorator() user: UserOutputDto,
-  ) {
+  ): Promise<CardModel> {
     try {
       return await this.cardService.registerNewCard(
         CardSimpleInputDto.dtoToModel(cardDto),
         user.id,
       );
     } catch (error) {
-      return new HttpException(error.message, HttpStatus.BAD_GATEWAY);
+      throw new HttpException(error.message, HttpStatus.BAD_GATEWAY);
     }
   }
 
@@ -66,7 +66,7 @@ class CardController {
   async discardAndIncreseCoins(
     @Param('cardId', ParseIntPipe) cardId: number,
     @UserDecorator() user: UserOutputDto,
-  ) {
+  ): Promise<void> {
     try {
       await this.cardService.discardCard(cardId, user.id);
     } catch (error) {

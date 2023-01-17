@@ -14,7 +14,7 @@ class StoreModel {
   public deck: Partial<DeckModel>;
   public card: Partial<CardModel>;
 
-  static fromEntity(entity: StoreEntity) {
+  static fromEntity(entity: StoreEntity): StoreModel {
     return new StoreModel({
       id: entity.id,
       price: entity.price,

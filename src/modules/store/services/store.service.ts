@@ -20,7 +20,7 @@ class StoreService {
     private deckService: DeckService,
   ) {}
 
-  async registerCardInStore(storeItem: StoreModel) {
+  async registerCardInStore(storeItem: StoreModel): Promise<void> {
     const card = await this.cardRepository
       .findOneOrFail({
         where: {
@@ -51,7 +51,7 @@ class StoreService {
     );
   }
 
-  async purchaseCardInStore(storeId: number, userId: number) {
+  async purchaseCardInStore(storeId: number, userId: number): Promise<void> {
     const storeItem = await this.storeRepository.findOneOrFail({
       where: { id: storeId, transaction: IsNull() },
       relations: { card: { deck: true }, user: true },

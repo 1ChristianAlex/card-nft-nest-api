@@ -22,7 +22,7 @@ class StoreController {
   async registerCardInStore(
     @Body() body: StoreInputDto,
     @UserDecorator() user: UserOutputDto,
-  ) {
+  ): Promise<void> {
     try {
       await this.storeService.registerCardInStore(
         new StoreModel({
@@ -40,7 +40,7 @@ class StoreController {
   async purchaseCardInMarket(
     @Body() body: StorePurchaseInputDto,
     @UserDecorator() user: UserOutputDto,
-  ) {
+  ): Promise<void> {
     try {
       await this.storeService.purchaseCardInStore(body.storeId, user.id);
     } catch (error) {

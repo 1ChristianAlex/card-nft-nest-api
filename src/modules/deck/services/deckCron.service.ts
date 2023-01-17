@@ -9,7 +9,7 @@ class DeckCronService {
   private readonly logger = new Logger(DeckCronService.name);
 
   @Cron(CronExpression.EVERY_HOUR)
-  async handleCron() {
+  async handleCron(): Promise<void> {
     this.logger.debug('Called every hour');
     await this.deckService.refreshAllGumbles();
 

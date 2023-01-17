@@ -38,12 +38,12 @@ class AwsS3Service {
       }),
     );
 
-    const newObjectImage = await this.getImageFromAws(fileName);
+    const imageSrc = this.getImageFromAws(fileName);
 
-    return newObjectImage;
+    return imageSrc;
   }
 
-  async getImageFromAws(fileName: string) {
+  getImageFromAws(fileName: string): string {
     return `https://${this.BUCKET_NAME}.s3.${this.REGION}.amazonaws.com/${fileName}`;
   }
 }

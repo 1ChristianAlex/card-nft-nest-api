@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import PasswordHash from 'src/lib/passwordHash/passwordHash.service';
+import CommonMessages from 'src/modules/common/common.messages';
 import DeckService from 'src/modules/deck/services/deck.service';
 import { Repository } from 'typeorm';
 import RolesEntity from '../entities/roles.entity';
@@ -26,7 +27,7 @@ class UserService {
     return allUsers.map(UserModel.fromEntity);
   }
 
-  public async getUserById(id: number) {
+  public async getUserById(id: number): Promise<UserModel> {
     try {
       const userById = await this.usersRepository.findOneOrFail({
         where: { id },
@@ -34,11 +35,11 @@ class UserService {
       });
       return UserModel.fromEntity(userById);
     } catch {
-      throw new Error('User not found');
+      throw new Error(CommonMessages.NOT_FOUND);
     }
   }
 
-  public async getUserByEmail(email: string) {
+  public async getUserByEmail(email: string): Promise<UserModel> {
     try {
       const [userByEmail] = await this.usersRepository.find({
         where: { email },
@@ -47,11 +48,11 @@ class UserService {
 
       return UserModel.fromEntity(userByEmail);
     } catch (error) {
-      throw new Error('User not found');
+      throw new Error(CommonMessages.NOT_FOUND);
     }
   }
 
-  public async createNewUser(user: UserModel) {
+  public async createNewUser(user: UserModel): Promise<UserModel> {
     const role = await this.roleRepository.findOneBy({
       id: ROLES_ID.PLAYER,
     });

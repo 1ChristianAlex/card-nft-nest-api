@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CardValueTrade } from 'src/modules/card/services/card.model';
+import CommonMessages from 'src/modules/common/common.messages';
 import { In, IsNull, Not, Repository } from 'typeorm';
 import TransactionEntity, {
   TransactionStatus,
@@ -47,7 +48,7 @@ class TransactionService {
         },
       })
       .catch(() => {
-        throw new Error('Transaction not found');
+        throw new Error(CommonMessages.NOT_FOUND);
       });
 
     await this.transactionRepository.update(
@@ -69,7 +70,7 @@ class TransactionService {
         },
       })
       .catch(() => {
-        throw new Error('Transaction not found');
+        throw new Error(CommonMessages.NOT_FOUND);
       });
 
     const target = self.transaction;

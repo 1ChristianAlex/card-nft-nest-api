@@ -14,7 +14,7 @@ class UserOutputDto {
 
   public role: RolesModel;
 
-  static fromModel(user: UserModel) {
+  static fromModel(user: UserModel): UserOutputDto {
     return new UserOutputDto({
       id: user.id,
       name: user.name,
