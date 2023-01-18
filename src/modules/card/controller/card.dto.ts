@@ -55,7 +55,7 @@ class CardInputDto {
   public tier: number;
   public thumbnail: number[];
 
-  static dtoToModel(input: CardInputDto): CardModel {
+  static toModel(input: CardInputDto): CardModel {
     return new CardModel({
       name: input.name,
       description: input.description,
@@ -82,4 +82,13 @@ class CardUpdateInputDto extends CardInputDto {
   public declare price: number;
 }
 
-export { CardSimpleInputDto, CardInputDto, CardUpdateInputDto };
+class CardGambleOutputDto {
+  constructor(public card: CardModel, public expiresIn: Date) {}
+}
+
+export {
+  CardSimpleInputDto,
+  CardInputDto,
+  CardUpdateInputDto,
+  CardGambleOutputDto,
+};

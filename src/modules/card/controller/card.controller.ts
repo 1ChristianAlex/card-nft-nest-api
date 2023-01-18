@@ -16,7 +16,11 @@ import { UserOutputDto } from 'src/modules/user/controllers/user.dto';
 import UserDecorator from 'src/modules/user/services/user.decorator';
 import { CardModel } from '../services/card.model';
 import CardService from '../services/card.service';
-import { CardSimpleInputDto, CardUpdateInputDto } from './card.dto';
+import {
+  CardGambleOutputDto,
+  CardSimpleInputDto,
+  CardUpdateInputDto,
+} from './card.dto';
 
 @Controller('card')
 @UseGuards(JwtAuthGuard)
@@ -44,7 +48,7 @@ class CardController {
   ): Promise<CardModel> {
     try {
       return await this.cardService.updateCard(
-        CardUpdateInputDto.dtoToModel(cardUpdate),
+        CardUpdateInputDto.toModel(cardUpdate),
       );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_GATEWAY);
@@ -54,9 +58,15 @@ class CardController {
   @Get('gamble')
   async getRandomCard(
     @UserDecorator() user: UserOutputDto,
-  ): Promise<CardModel> {
+  ): Promise<CardGambleOutputDto> {
     try {
-      return await this.cardService.getRandomCard(user.id);
+      const cardModel = await this.cardService.getRandomCard(user.id);
+
+      const expiresIn = new Date();
+
+      expiresIn.setSeconds(expiresIn.getSeconds() + this.cardService.claimTime);
+
+      return new CardGambleOutputDto(cardModel, expiresIn);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

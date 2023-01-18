@@ -14,7 +14,7 @@ class AwsS3Service {
 
   private readonly BUCKET_NAME = 'card-nft-bucket';
 
-  async createBucket() {
+  async createBucket(): Promise<void> {
     try {
       await this.s3Client.send(
         new CreateBucketCommand({ Bucket: this.BUCKET_NAME }),

@@ -33,7 +33,7 @@ class CardService {
     });
   }
 
-  private readonly claimTime = 15;
+  public readonly claimTime = 15;
 
   private async renewCardStatus(cardId: number): Promise<void> {
     const currentTime = new Date();
