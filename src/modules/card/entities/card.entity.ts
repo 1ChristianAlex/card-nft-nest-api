@@ -20,10 +20,11 @@ interface ICardEntityConstructor {
   price: number;
   likes: number;
   tier: TierEntity;
-  thumbnail: ThumbsEntity[];
+  thumbnail?: ThumbsEntity[];
   id?: number;
   user?: Partial<UserEntity>;
   status?: Partial<CardStatusEntity>;
+  deck?: Partial<DeckEntity>;
 }
 
 @Entity({

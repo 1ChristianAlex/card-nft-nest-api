@@ -33,7 +33,7 @@ export class initalSeed2672241522331 implements MigrationInterface {
     await this.deleteAllTiers(queryRunner);
   }
 
-  private async insertTiers(queryRunner: QueryRunner) {
+  private async insertTiers(queryRunner: QueryRunner): Promise<void> {
     const cardStatus = [
       new CardStatusEntity({ name: 'Free', id: CARD_STATUS_ENUM.FREE }),
       new CardStatusEntity({
@@ -54,7 +54,7 @@ export class initalSeed2672241522331 implements MigrationInterface {
     await queryRunner.manager.save(TierEntity, tiers);
   }
 
-  private async insertAdminUser(queryRunner: QueryRunner) {
+  private async insertAdminUser(queryRunner: QueryRunner): Promise<void> {
     const adminRole = await queryRunner.manager.findOneBy(RolesEntity, {
       description: this.adminRole.description,
     });
@@ -70,7 +70,7 @@ export class initalSeed2672241522331 implements MigrationInterface {
     await queryRunner.manager.save(UserEntity, adminUser);
   }
 
-  private async insertRoles(queryRunner: QueryRunner) {
+  private async insertRoles(queryRunner: QueryRunner): Promise<void> {
     const roles = [
       this.adminRole,
       new RolesEntity('Manager'),
@@ -80,19 +80,19 @@ export class initalSeed2672241522331 implements MigrationInterface {
     await queryRunner.manager.save(RolesEntity, roles);
   }
 
-  private async deleteAllTiers(queryRunner: QueryRunner) {
+  private async deleteAllTiers(queryRunner: QueryRunner): Promise<void> {
     const allTiers = await queryRunner.manager.find(TierEntity);
 
     await queryRunner.manager.delete(TierEntity, allTiers);
   }
 
-  private async deleteAllRoles(queryRunner: QueryRunner) {
+  private async deleteAllRoles(queryRunner: QueryRunner): Promise<void> {
     const allRole = await queryRunner.manager.find(RolesEntity);
 
     await queryRunner.manager.delete(RolesEntity, allRole);
   }
 
-  private async deleteAdminUser(queryRunner: QueryRunner) {
+  private async deleteAdminUser(queryRunner: QueryRunner): Promise<void> {
     const admin = await queryRunner.manager.findOneBy(UserEntity, {
       role: { description: this.adminRole.description },
     });
