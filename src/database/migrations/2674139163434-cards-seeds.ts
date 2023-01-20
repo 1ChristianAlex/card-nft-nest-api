@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { In, MigrationInterface, QueryRunner } from 'typeorm';
 import { readFile } from 'fs/promises';
 import { join, resolve } from 'path';
 import CardEntity from '../../modules/card/entities/card.entity';
@@ -50,7 +50,7 @@ export class CardsSeeds2674139163434 implements MigrationInterface {
             description: item.description,
             likes: item.likes,
             name,
-            price: 150,
+            price: Math.floor(Math.random() * 1000),
             tier: { id: CARD_TIER.SILVER } as TierEntity,
             user: { id: 1 },
             status: { id: CARD_STATUS_ENUM.FREE },
@@ -79,13 +79,26 @@ export class CardsSeeds2674139163434 implements MigrationInterface {
 
     await Promise.all(
       cardsList.map(async (item) => {
-        await queryRunner.manager.delete(
-          ThumbsEntity,
-          item.thumbnails.map((itemThumb) => ({ path: itemThumb })),
+        await queryRunner.manager.delete(ThumbsEntity, {
+          path: In(item.thumbnails.map((item) => item)),
+        });
+        const name = item.name
+          .split(',')
+          .reverse()
+          .join()
+          .replace(',', ' ')
+          .trim();
+
+        await queryRunner.manager.update(
+          CardEntity,
+          {
+            name,
+          },
+          { user: null, deck: null, status: null, tier: null },
         );
 
         await queryRunner.manager.delete(CardEntity, {
-          name: item.name,
+          name,
         });
       }),
     );

@@ -42,7 +42,7 @@ import StoreEntity from 'src/modules/store/entities/store.entity';
         StoreEntity,
       ],
       synchronize: false,
-      logging: true,
+      logging: false,
     }),
     CommonLib,
     UserModule,

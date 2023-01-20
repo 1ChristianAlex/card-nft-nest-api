@@ -83,7 +83,7 @@ class CardUpdateInputDto extends CardInputDto {
 }
 
 class CardGambleOutputDto {
-  constructor(public card: CardModel, public expiresIn: Date) {}
+  constructor(public card: CardModel, public expiresInSeconds: number) {}
 }
 
 export {

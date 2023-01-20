@@ -9,11 +9,19 @@ class DeckCronService {
   private readonly logger = new Logger(DeckCronService.name);
 
   @Cron(CronExpression.EVERY_HOUR)
-  async handleCron(): Promise<void> {
+  async handleCronGamble(): Promise<void> {
     this.logger.debug('Called every hour');
-    await this.deckService.refreshAllGumbles();
+    await this.deckService.refreshAllGambles();
 
-    this.logger.debug('Gumbles reseted');
+    this.logger.debug('Gambles reseted');
+  }
+
+  @Cron(CronExpression.EVERY_3_HOURS)
+  async handleCronClaim(): Promise<void> {
+    this.logger.debug('Called every 3 hours');
+    await this.deckService.resetClaim();
+
+    this.logger.debug('Claim reset reseted');
   }
 }
 

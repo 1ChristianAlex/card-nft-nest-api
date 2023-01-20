@@ -62,11 +62,7 @@ class CardController {
     try {
       const cardModel = await this.cardService.getRandomCard(user.id);
 
-      const expiresIn = new Date();
-
-      expiresIn.setSeconds(expiresIn.getSeconds() + this.cardService.claimTime);
-
-      return new CardGambleOutputDto(cardModel, expiresIn);
+      return new CardGambleOutputDto(cardModel, this.cardService.claimTime);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

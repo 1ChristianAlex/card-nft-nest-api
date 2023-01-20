@@ -23,7 +23,15 @@ class DeckService {
     });
 
     if (!userDeck.gambles) {
-      throw new Error(DeckMessages.WITHOUT_GAMBLES);
+      const nextReset = new Date();
+      nextReset.setHours(nextReset.getHours() + 1, 0, 0, 0);
+
+      const diffMiliseconds = nextReset.getTime() - Date.now();
+      const diffInMinutes = Math.floor(diffMiliseconds / 60000);
+
+      throw new Error(
+        `${DeckMessages.WITHOUT_GAMBLES} - Next gamble in ${diffInMinutes} minutes.`,
+      );
     }
 
     await this.deckRepository.decrement({ user: { id: userId } }, 'gambles', 1);
@@ -92,13 +100,17 @@ class DeckService {
     await this.refreshClaimdedTotal(userDeck);
   }
 
-  public async refreshAllGumbles(): Promise<void> {
+  public async refreshAllGambles(): Promise<void> {
     const nextGamble = this.getNextGamble();
 
     await this.deckRepository.update(
       { id: Not(IsNull()) },
       { gambles: 8, nextGamble },
     );
+  }
+
+  async resetClaim(): Promise<void> {
+    await this.deckRepository.update({ id: Not(IsNull()) }, { claims: 1 });
   }
 
   private getNextGamble(): Date {
